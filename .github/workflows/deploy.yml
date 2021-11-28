@@ -30,18 +30,11 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
 
       - name: AWS credentials
-        if: github.ref == 'refs/heads/staging'
-        uses: noverde/github-actions/aws-configure@main
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_STG }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_STG }}
-
-      - name: AWS credentials
         if: github.ref == 'refs/heads/main'
         uses: noverde/github-actions/aws-configure@main
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_PRD }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_PRD }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
 
       - name: Install dependencies
         run: make install-dev
@@ -52,24 +45,8 @@ jobs:
       - name: Test
         run: make coverage
 
-      - name: Send 'start deploy' notification
-        if: github.ref == 'refs/heads/main'
-        uses: archive/github-actions-slack@v1.0.2
-        with:
-          slack-bot-user-oauth-access-token: ${{ secrets.SLACK_NOBOT_TOKEN }}
-          slack-channel: ${{ secrets.SLACK_DEPLOY_CHANNEL_ID }}
-          slack-text: ":arrow_forward: Iniciando Deploy do *${{ github.repository }}*"
-
       - name: Deploy
         run: make deploy
 
       - name: Database migration
         run: make migrate
-
-      - name: Send 'finish deploy' notification
-        if: github.ref == 'refs/heads/main'
-        uses: archive/github-actions-slack@v1.0.2
-        with:
-          slack-bot-user-oauth-access-token: ${{ secrets.SLACK_NOBOT_TOKEN }}
-          slack-channel: ${{ secrets.SLACK_DEPLOY_CHANNEL_ID }}
-          slack-text: ":ok: Finalizado Deploy do *${{ github.repository }}* :rocket:"
