@@ -1,0 +1,69 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Trades Management
+
+Parameters:
+  Environment:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: SantiveEnvironment
+  PrivateSubnets:
+    Type: AWS::SSM::Parameter::Value<List<String>>
+    Default: PrivateSubnets
+  PrivateSecurityGroups:
+    Type: AWS::SSM::Parameter::Value<List<String>>
+    Default: PrivateSecurityGroups
+
+Mappings:
+  Environments:
+    development:
+      LogLevel: DEBUG
+    production:
+      LogLevel: ERROR
+
+Globals:
+  Function:
+    Runtime: python3.8
+    Timeout: 30
+    MemorySize: 256
+    Layers:
+      - Ref: TradesManagementDepLayer
+    VpcConfig:
+      SecurityGroupIds:
+        Ref: PrivateSecurityGroups
+      SubnetIds:
+        Ref: PrivateSubnets
+    Environment:
+      Variables:
+        ENVIRONMENT:
+          Ref: Environment
+        LOG_LEVEL:
+          Fn::FindInMap:
+            - Environments
+            - Ref: Environment
+            - LogLevel
+        DATABASE_URL: "parameters:///trades-management/database_url"
+        SENTRY_DSN: "https://e186ded0d7c64d029628fad2a9c92218@o1155645.ingest.sentry.io/6236195"
+
+Resources:
+  TradesManagementDepLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: sam-trades-management-dependencies
+      Description: Python dependencies
+      ContentUri: .aws-sam/dependencies
+      LicenseInfo: "MIT"
+      CompatibleRuntimes:
+        - python3.8
+
+  # Lambda
+
+  Migrate:
+    Type: AWS::Serverless::Function
+    Properties:
+      Timeout: 90
+      FunctionName: platform-tracker-migrations
+      CodeUri: migrations
+      Handler: serpens.migrations.migrate_handler
+      Policies:
+        - AWSLambda_FullAccess
+        - AmazonSSMReadOnlyAccess
