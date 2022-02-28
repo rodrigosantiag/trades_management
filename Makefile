@@ -1,11 +1,11 @@
-# Makefile version 21.08.02.2
+# Makefile version 22.01.19.1
 
 # github env vars
 ifeq ($(GITHUB_REF), refs/heads/main)
 	ENVIRONMENT ?= production
 endif
-ifeq ($(GITHUB_REF), refs/heads/develop)
-	ENVIRONMENT ?= development
+ifeq ($(GITHUB_REF), refs/heads/staging)
+	ENVIRONMENT ?= staging
 endif
 
 # project settings
@@ -16,9 +16,12 @@ STACK_NAME    ?= "$(PROJECT_NAME)-$(ENVIRONMENT)-stack"
 STACK_BUCKET  ?= "aws-sam-cli-$(ENVIRONMENT)-artifacts"
 
 # venv settings
-export PYTHONPATH := $(PROJECT_PATH)
+export PYTHONPATH := $(PROJECT_PATH):tests/fixtures
 export VIRTUALENV := $(PWD)/.venv
 export PATH       := $(VIRTUALENV)/bin:$(PATH)
+
+# unittest logging level
+test: export LOG_LEVEL=CRITICAL
 
 # dockerfile settings if present
 ifeq ($(wildcard Dockerfile),)
@@ -32,10 +35,12 @@ ifeq ($(filter undefine,$(value .FEATURES)),)
 SHELL = env PATH="$(PATH)" /bin/bash
 endif
 
+.PHONY: .env .venv
+
 all:
 
 .env:
-	echo 'PYTHONPATH="$(PROJECT_PATH)"' > .env
+	echo 'PYTHONPATH="$(PYTHONPATH)"' > .env
 
 .venv:
 	python3.8 -m venv $(VIRTUALENV)
@@ -63,6 +68,9 @@ lint:
 format:
 	black --line-length=100 --target-version=py38 .
 
+test-integration:
+	python -m unittest discover -p "itest*.py"
+
 test:
 	coverage run --source=$(PROJECT_PATH) --omit=dependencies -m unittest
 
@@ -77,8 +85,9 @@ migrate:
 deploy:
 	pip install -r requirements.txt -t .aws-sam/dependencies/python
 	sam deploy \
-		--template-file template.yml \
-		--capabilities CAPABILITY_IAM \
 		--stack-name $(STACK_NAME) \
 		--s3-bucket $(STACK_BUCKET) \
+		--template-file template.yml \
+		--capabilities CAPABILITY_IAM \
+		--tags "stack=$(PROJECT_NAME)" \
 		$(SAM_EXTRA_ARGS)
