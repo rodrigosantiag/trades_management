@@ -13,7 +13,7 @@ PROJECT_NAME  := $(shell grep -m1 'APPNAME' */settings.py | cut -f2 -d'"')
 PROJECT_PATH  := $(shell ls */settings.py | xargs dirname | head -n 1)
 ENVIRONMENT   ?= development
 STACK_NAME    ?= "$(PROJECT_NAME)-$(ENVIRONMENT)-stack"
-STACK_BUCKET  ?= "aws-sam-cli-$(ENVIRONMENT)-artifacts"
+STACK_BUCKET  ?= "trades-management-$(ENVIRONMENT)-artifacts"
 
 # venv settings
 export PYTHONPATH := $(PROJECT_PATH):tests/fixtures
