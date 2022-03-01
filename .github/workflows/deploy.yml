@@ -11,11 +11,22 @@ jobs:
     name: Build, test and deploy
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
 
       - name: Use Python 3.8
         uses: actions/setup-python@v2
@@ -24,17 +35,17 @@ jobs:
 
       - name: AWS credentials
         if: github.ref == 'refs/heads/develop'
-        uses: rodrigosantiag/github-actions/aws-configure@main
+        uses: actions/aws-configure@main
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
 
       - name: AWS credentials
         if: github.ref == 'refs/heads/main'
-        uses: noverde/github-actions/aws-configure@main
+        uses: actions/aws-configure@main
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_PRD }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_PRD }}
 
       - name: Install dependencies
         run: make install-dev
@@ -44,9 +55,15 @@ jobs:
 
       - name: Test
         run: make coverage
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost/postgres
 
       - name: Deploy
         run: make deploy
 
       - name: Database migration
-        run: make migrate
+          run: make migrate
+
+      - name: Upload coverage badge
+        if: github.ref == 'refs/heads/main'
+        uses: actions/coverage-badge@coverage-badge
