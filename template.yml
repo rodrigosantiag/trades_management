@@ -61,7 +61,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Timeout: 90
-      FunctionName: platform-tracker-migrations
+      FunctionName: trades-management-migrations
       CodeUri: migrations
       Handler: serpens.migrations.migrate_handler
       Policies:
