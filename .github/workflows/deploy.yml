@@ -35,19 +35,17 @@ jobs:
 
       - name: AWS credentials
         if: github.ref == 'refs/heads/develop'
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: rodrigosantiag/github-actions/aws-configure@main
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
-          aws-region: ${{ secrets.AWS_REGION_DEV }}
 
       - name: AWS credentials
         if: github.ref == 'refs/heads/main'
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: rodrigosantiag/github-actions/aws-configure@main
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_PRD }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_PRD }}
-          aws-region: ${{ secrets.AWS_REGION_PRD }}
 
       - name: Install dependencies
         run: make install-dev
