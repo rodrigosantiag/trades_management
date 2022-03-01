@@ -17,10 +17,10 @@ Mappings:
   Environments:
     development:
       LogLevel: DEBUG
-      DatabaseSecret: "parameters:///trades-management/database_url"
+      DatabaseSecret: "postgres://trades_management:96CA3D5A-8C70-4F3F-BA1A-3A3C2F75716B@shared.c71n6y3hps2y.us-east-1.rds.amazonaws.com:5432/trades_management_dev"
     production:
       LogLevel: ERROR
-      DatabaseSecret: "parameters:///trades-management/database_url"
+      DatabaseSecret: "postgres://trades_management:96CA3D5A-8C70-4F3F-BA1A-3A3C2F75716B@shared.c71n6y3hps2y.us-east-1.rds.amazonaws.com:5432/trades_management_dev"
 
 Globals:
   Function:
