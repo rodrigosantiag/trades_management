@@ -1,6 +1,6 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-CREATE TABLE IF NOT EXISTS public.accounts (
+CREATE TABLE IF NOT EXISTS accounts (
                                  id SERIAL PRIMARY KEY,
                                  uid uuid DEFAULT uuid_generate_v4(),
                                  type_account character varying(1),
@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS public.accounts (
                                  user_id integer
 );
 
-CREATE TABLE IF NOT EXISTS public.brokers (
+CREATE TABLE IF NOT EXISTS brokers (
                                 id SERIAL PRIMARY KEY,
                                 uid uuid DEFAULT uuid_generate_v4(),
                                 name character varying,
@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS public.brokers (
                                 updated_at timestamp without time zone NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS public.strategies (
+CREATE TABLE IF NOT EXISTS strategies (
                                    id SERIAL PRIMARY KEY,
                                    uid uuid DEFAULT uuid_generate_v4(),
                                    name character varying,
@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS public.strategies (
                                    updated_at timestamp(6) without time zone NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS public.trades (
+CREATE TABLE IF NOT EXISTS trades (
                                id SERIAL PRIMARY KEY,
                                uid uuid DEFAULT uuid_generate_v4(),
                                value numeric(10,2),
@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS public.trades (
 );
 
 
-CREATE TABLE IF NOT EXISTS public.users (
+CREATE TABLE IF NOT EXISTS users (
                               id SERIAL PRIMARY KEY,
                               uid uuid DEFAULT uuid_generate_v4(),
                               encrypted_password character varying DEFAULT ''::character varying NOT NULL,
@@ -67,44 +67,44 @@ CREATE TABLE IF NOT EXISTS public.users (
                               updated_at timestamp without time zone NOT NULL
 );
 
-CREATE INDEX index_accounts_on_broker_id ON public.accounts USING btree (broker_id);
+CREATE INDEX index_accounts_on_broker_id ON accounts USING btree (broker_id);
 
-CREATE INDEX index_accounts_on_user_id ON public.accounts USING btree (user_id);
+CREATE INDEX index_accounts_on_user_id ON accounts USING btree (user_id);
 
-CREATE INDEX index_brokers_on_user_id ON public.brokers USING btree (user_id);
+CREATE INDEX index_brokers_on_user_id ON brokers USING btree (user_id);
 
-CREATE INDEX index_strategies_on_user_id ON public.strategies USING btree (user_id);
+CREATE INDEX index_strategies_on_user_id ON strategies USING btree (user_id);
 
-CREATE INDEX index_trades_on_account_id ON public.trades USING btree (account_id);
+CREATE INDEX index_trades_on_account_id ON trades USING btree (account_id);
 
-CREATE INDEX index_trades_on_strategy_id ON public.trades USING btree (strategy_id);
+CREATE INDEX index_trades_on_strategy_id ON trades USING btree (strategy_id);
 
-CREATE INDEX index_trades_on_user_id ON public.trades USING btree (user_id);
+CREATE INDEX index_trades_on_user_id ON trades USING btree (user_id);
 
-CREATE UNIQUE INDEX index_users_on_confirmation_token ON public.users USING btree (confirmation_token);
+CREATE UNIQUE INDEX index_users_on_confirmation_token ON users USING btree (confirmation_token);
 
-CREATE UNIQUE INDEX index_users_on_email ON public.users USING btree (email);
+CREATE UNIQUE INDEX index_users_on_email ON users USING btree (email);
 
-CREATE UNIQUE INDEX index_users_on_reset_password_token ON public.users USING btree (reset_password_token);
+CREATE UNIQUE INDEX index_users_on_reset_password_token ON users USING btree (reset_password_token);
 
-ALTER TABLE ONLY public.trades
-    ADD CONSTRAINT fk_trades_users FOREIGN KEY (user_id) REFERENCES public.users(id);
+ALTER TABLE ONLY trades
+    ADD CONSTRAINT fk_trades_users FOREIGN KEY (user_id) REFERENCES users(id);
 
-ALTER TABLE ONLY public.brokers
-    ADD CONSTRAINT fk_brokers_users FOREIGN KEY (user_id) REFERENCES public.users(id);
+ALTER TABLE ONLY brokers
+    ADD CONSTRAINT fk_brokers_users FOREIGN KEY (user_id) REFERENCES users(id);
 
-ALTER TABLE ONLY public.trades
-    ADD CONSTRAINT fk_trades_accounts FOREIGN KEY (account_id) REFERENCES public.accounts(id);
+ALTER TABLE ONLY trades
+    ADD CONSTRAINT fk_trades_accounts FOREIGN KEY (account_id) REFERENCES accounts(id);
 
-ALTER TABLE ONLY public.accounts
-    ADD CONSTRAINT fk_accounts_brokers FOREIGN KEY (broker_id) REFERENCES public.brokers(id);
+ALTER TABLE ONLY accounts
+    ADD CONSTRAINT fk_accounts_brokers FOREIGN KEY (broker_id) REFERENCES brokers(id);
 
-ALTER TABLE ONLY public.accounts
-    ADD CONSTRAINT fk_accounts_users FOREIGN KEY (user_id) REFERENCES public.users(id);
+ALTER TABLE ONLY accounts
+    ADD CONSTRAINT fk_accounts_users FOREIGN KEY (user_id) REFERENCES users(id);
 
-ALTER TABLE ONLY public.strategies
-    ADD CONSTRAINT fk_strategies_users FOREIGN KEY (user_id) REFERENCES public.users(id);
+ALTER TABLE ONLY strategies
+    ADD CONSTRAINT fk_strategies_users FOREIGN KEY (user_id) REFERENCES users(id);
 
-ALTER TABLE ONLY public.trades
-    ADD CONSTRAINT fk_trades_strategies FOREIGN KEY (strategy_id) REFERENCES public.strategies(id);
+ALTER TABLE ONLY trades
+    ADD CONSTRAINT fk_trades_strategies FOREIGN KEY (strategy_id) REFERENCES strategies(id);
 
