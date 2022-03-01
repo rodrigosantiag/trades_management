@@ -72,4 +72,4 @@ Resources:
       Handler: serpens.migrations.migrate_handler
       Policies:
         - AWSLambda_FullAccess
-        - AmazonSSMReadOnlyAccess
+        - AmazonSSMFullAccess
