@@ -75,7 +75,7 @@ test:
 	coverage run --source=$(PROJECT_PATH) --omit=dependencies -m unittest
 
 coverage: test .coverage
-	coverage report -m --fail-under=10
+	coverage report -m --fail-under=1
 
 migrate:
 	aws lambda invoke --function-name $(PROJECT_NAME)-migrations result --log-type Tail > output
