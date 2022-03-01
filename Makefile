@@ -78,7 +78,7 @@ coverage: test .coverage
 	coverage report -m --fail-under=1
 
 migrate:
-	aws lambda invoke --function-name $(PROJECT_NAME)-migrations result --log-type Tail > output
+	aws lambda invoke --debug --function-name $(PROJECT_NAME)-migrations result --log-type Tail > output
 	@jq -r '.LogResult' output | base64 -d
 	@HAS_ERROR=$$(jq 'has("FunctionError")' output) ; ! $$HAS_ERROR
 
