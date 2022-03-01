@@ -17,8 +17,10 @@ Mappings:
   Environments:
     development:
       LogLevel: DEBUG
+      DatabaseSecret: parameters:///trades-management/database_url
     production:
       LogLevel: ERROR
+      DatabaseSecret: parameters:///trades-management/database_url
 
 Globals:
   Function:
@@ -41,7 +43,11 @@ Globals:
             - Environments
             - Ref: Environment
             - LogLevel
-        DATABASE_URL: "parameters:///trades-management/database_url"
+        DATABASE_URL:
+          Fn::FindInMap:
+            - Environments
+            - Ref: Environment
+            - DatabaseSecret
         SENTRY_DSN: "https://e186ded0d7c64d029628fad2a9c92218@o1155645.ingest.sentry.io/6236195"
 
 Resources:
