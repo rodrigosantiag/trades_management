@@ -247,3 +247,4 @@ cython_debug/
 samconfig.toml
 
 # End of https://www.toptal.com/developers/gitignore/api/intellij+all,sam+config,python
+.DS_Store
