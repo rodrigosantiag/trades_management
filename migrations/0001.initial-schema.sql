@@ -63,8 +63,8 @@ CREATE TABLE IF NOT EXISTS users (
                               email character varying,
                               risk integer,
                               tokens text,
-                              created_at timestamp without time zone NOT NULL,
-                              updated_at timestamp without time zone NOT NULL
+                              created_at timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                              updated_at timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE INDEX index_accounts_on_broker_id ON accounts USING btree (broker_id);
@@ -107,4 +107,3 @@ ALTER TABLE ONLY strategies
 
 ALTER TABLE ONLY trades
     ADD CONSTRAINT fk_trades_strategies FOREIGN KEY (strategy_id) REFERENCES strategies(id);
-
