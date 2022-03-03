@@ -47,6 +47,22 @@ class Account(db.Entity):
         return Account.get(uid=uid)
 
 
+class Strategy(db.Entity):
+    _table_ = "strategies"
+
+    id = PrimaryKey(int, auto=True)
+    uid = Required(UUID, default=uuid4)
+    name = Optional(str, nullable=True)
+    user = Optional(lambda: User)
+    created_at = Required(datetime, default=datetime.utcnow)
+    updated_at = Required(datetime, default=datetime.utcnow)
+
+    @staticmethod
+    @db_session
+    def get_by_uid(uid: UUID) -> Union["Strategy", None]:
+        return Strategy.get(uid=uid)
+
+
 class User(db.Entity):
     _table_ = "users"
 
@@ -60,6 +76,7 @@ class User(db.Entity):
     risk = Optional(int, nullable=True)
     brokers = Set("Broker")
     accounts = Set("Account")
+    strategies = Set("Strategy")
     created_at = Required(datetime, default=datetime.utcnow)
     updated_at = Required(datetime, default=datetime.utcnow)
 

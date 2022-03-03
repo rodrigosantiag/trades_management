@@ -4,7 +4,7 @@ from uuid import uuid4
 
 from pony.orm.core import db_session
 
-from entities import Broker, User, Account
+from entities import Broker, User, Account, Strategy
 from tests.fixtures.fixtures import create_sample_user, create_sample_broker
 
 
@@ -87,5 +87,42 @@ class TestAccount(unittest.TestCase):
 
     def test_account_get_by_uid_with_no_result(self):
         result = Account.get_by_uid(uuid4())
+
+        self.assertIsNone(result)
+
+
+class TestStrategy(unittest.TestCase):
+    @classmethod
+    @db_session
+    def setUpClass(cls):
+        cls.user = create_sample_user()
+
+        cls.strategy = Strategy(
+            uid=uuid4(),
+            name="Test Strategy",
+            user=cls.user,
+            created_at=datetime.utcnow(),
+            updated_at=datetime.utcnow(),
+        )
+
+    @classmethod
+    @db_session
+    def tearDownClass(cls):
+        Strategy.select().delete()
+        User.select().delete()
+
+    def test_get_strategy_by_uuid(self):
+        uid = self.strategy.uid
+
+        result = Strategy.get_by_uid(uid)
+
+        self.assertIsInstance(result, Strategy)
+        self.assertEqual(result.id, self.strategy.id)
+        self.assertEqual(result.name, "Test Strategy")
+        self.assertIsInstance(result.user, User)
+        self.assertEqual(result.user.id, self.user.id)
+
+    def test_get_strategy_by_uuid_with_no_result(self):
+        result = Strategy.get_by_uid(uuid4())
 
         self.assertIsNone(result)
