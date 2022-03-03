@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Union
 from uuid import UUID, uuid4
 
 from pony.orm.core import PrimaryKey, Required, Optional, Set, db_session
@@ -16,13 +17,34 @@ class Broker(db.Entity):
     uid = Required(UUID, default=uuid4)
     name = Required(str)
     user = Required(lambda: User, column="user_id")
+    accounts = Set(lambda: Account)
     created_at = Required(datetime, default=datetime.utcnow)
     updated_at = Required(datetime, default=datetime.utcnow)
 
     @staticmethod
     @db_session
-    def get_by_uid(uid: str) -> "Broker":
+    def get_by_uid(uid: UUID) -> "Broker":
         return Broker.get(uid=uid)
+
+
+class Account(db.Entity):
+    _table_ = "accounts"
+
+    id = PrimaryKey(int, auto=True)
+    uid = Required(UUID, default=uuid4)
+    type_account = Optional(str, nullable=True)
+    currency = Optional(str, nullable=True)
+    initial_balance = Optional(float, nullable=True)
+    current_balance = Optional(float, nullable=True)
+    broker = Optional("Broker")
+    user = Optional(lambda: User)
+    created_at = Required(datetime, default=datetime.utcnow)
+    updated_at = Required(datetime, default=datetime.utcnow)
+
+    @staticmethod
+    @db_session
+    def get_by_uid(uid: UUID) -> Union["Account", None]:
+        return Account.get(uid=uid)
 
 
 class User(db.Entity):
@@ -37,6 +59,7 @@ class User(db.Entity):
     email = Optional(str, nullable=True)
     risk = Optional(int, nullable=True)
     brokers = Set("Broker")
+    Accounts = Set("Account")
     created_at = Required(datetime, default=datetime.utcnow)
     updated_at = Required(datetime, default=datetime.utcnow)
 
