@@ -39,6 +39,11 @@ class TestBroker(unittest.TestCase):
         self.assertIsInstance(result.user, User)
         self.assertEqual(result.user.id, self.broker.user.id)
 
+    def test_get_broker_get_by_uid_with_no_result(self):
+        result = Broker.get_by_uid(uuid4())
+
+        self.assertIsNone(result)
+
 
 class TestAccount(unittest.TestCase):
     @classmethod
