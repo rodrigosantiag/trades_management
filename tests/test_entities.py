@@ -108,6 +108,7 @@ class TestStrategy(unittest.TestCase):
     @classmethod
     @db_session
     def tearDownClass(cls):
+        Strategy.select().delete()
         User.select().delete()
 
     def test_get_strategy_by_uuid(self):
