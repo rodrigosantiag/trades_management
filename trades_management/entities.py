@@ -36,8 +36,9 @@ class Account(db.Entity):
     currency = Optional(str, nullable=True)
     initial_balance = Optional(float, nullable=True)
     current_balance = Optional(float, nullable=True)
-    broker = Optional("Broker")
-    user = Optional(lambda: User)
+    broker = Required(Broker, column="broker_id")
+    user = Required(lambda: User, column="user_id")
+    trades = Set(lambda: Trade)
     created_at = Required(datetime, default=datetime.utcnow)
     updated_at = Required(datetime, default=datetime.utcnow)
 
@@ -53,7 +54,8 @@ class Strategy(db.Entity):
     id = PrimaryKey(int, auto=True)
     uid = Required(UUID, default=uuid4)
     name = Optional(str, nullable=True)
-    user = Optional(lambda: User)
+    user = Required(lambda: User, column="user_id")
+    trades = Set(lambda: Trade)
     created_at = Required(datetime, default=datetime.utcnow)
     updated_at = Required(datetime, default=datetime.utcnow)
 
@@ -61,6 +63,28 @@ class Strategy(db.Entity):
     @db_session
     def get_by_uid(uid: UUID) -> Union["Strategy", None]:
         return Strategy.get(uid=uid)
+
+
+class Trade(db.Entity):
+    _table_ = "trades"
+
+    id = PrimaryKey(int, auto=True)
+    uid = Required(UUID, default=uuid4)
+    value = Optional(float, nullable=True)
+    profit = Optional(float, nullable=True)
+    result = Optional(bool, nullable=True)
+    result_balance = Optional(float, nullable=True)
+    type_trade = Optional(str, nullable=True)
+    account = Required(Account, column="account_id")
+    user = Required(lambda: User, column="user_id")
+    strategy = Required(Strategy, column="strategy_id")
+    created_at = Required(datetime, default=datetime.utcnow)
+    updated_at = Required(datetime, default=datetime.utcnow)
+
+    @staticmethod
+    @db_session
+    def get_by_uid(uid: UUID) -> Union["Trade", None]:
+        return Trade.get(uid=uid)
 
 
 class User(db.Entity):
@@ -74,9 +98,10 @@ class User(db.Entity):
     name = Optional(str, nullable=True)
     email = Optional(str, nullable=True)
     risk = Optional(int, nullable=True)
-    brokers = Set("Broker")
-    accounts = Set("Account")
-    strategies = Set("Strategy")
+    brokers = Set(Broker)
+    accounts = Set(Account)
+    strategies = Set(Strategy)
+    trades = Set(Trade)
     created_at = Required(datetime, default=datetime.utcnow)
     updated_at = Required(datetime, default=datetime.utcnow)
 

@@ -4,8 +4,13 @@ from uuid import uuid4
 
 from pony.orm.core import db_session
 
-from entities import Broker, User, Account, Strategy
-from tests.fixtures.fixtures import create_sample_user, create_sample_broker
+from entities import Broker, User, Account, Strategy, Trade
+from tests.fixtures.fixtures import (
+    create_sample_user,
+    create_sample_broker,
+    create_sample_account,
+    create_sample_strategy,
+)
 
 
 class TestBroker(unittest.TestCase):
@@ -124,5 +129,62 @@ class TestStrategy(unittest.TestCase):
 
     def test_get_strategy_by_uuid_with_no_result(self):
         result = Strategy.get_by_uid(uuid4())
+
+        self.assertIsNone(result)
+
+
+class TestTrade(unittest.TestCase):
+    @classmethod
+    @db_session
+    def setUpClass(cls):
+        cls.account = create_sample_account()
+
+        cls.strategy = create_sample_strategy()
+
+        cls.strategy.user = cls.account.user
+
+        cls.trade = Trade(
+            uid=uuid4(),
+            value=100.0,
+            profit=80.0,
+            result=True,
+            result_balance=80.0,
+            type_trade="T",
+            user=cls.account.user,
+            account=cls.account,
+            strategy=cls.strategy,
+            created_at=datetime.utcnow(),
+            updated_at=datetime.utcnow(),
+        )
+
+    @classmethod
+    @db_session
+    def tearDownClass(cls):
+        Trade.select().delete()
+        Strategy.select().delete()
+        Account.select().delete()
+        Broker.select().delete()
+        User.select().delete()
+
+    def test_trade_get_by_uid(self):
+        uid = self.trade.uid
+        result = Trade.get_by_uid(uid)
+
+        self.assertIsInstance(result, Trade)
+        self.assertEqual(result.id, self.trade.id)
+        self.assertEqual(result.value, 100.0)
+        self.assertEqual(result.profit, 80.0)
+        self.assertTrue(result.result)
+        self.assertEqual(result.result_balance, 80.0)
+        self.assertEqual(result.type_trade, "T")
+        self.assertIsInstance(result.account, Account)
+        self.assertEqual(result.account.id, self.account.id)
+        self.assertIsInstance(result.user, User)
+        self.assertEqual(result.user.id, self.account.user.id)
+        self.assertIsInstance(result.strategy, Strategy)
+        self.assertEqual(result.strategy.id, self.strategy.id)
+
+    def test_trade_get_by_uid_with_no_result(self):
+        result = Trade.get_by_uid(uuid4())
 
         self.assertIsNone(result)
