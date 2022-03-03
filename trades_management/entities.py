@@ -59,7 +59,7 @@ class User(db.Entity):
     email = Optional(str, nullable=True)
     risk = Optional(int, nullable=True)
     brokers = Set("Broker")
-    Accounts = Set("Account")
+    accounts = Set("Account")
     created_at = Required(datetime, default=datetime.utcnow)
     updated_at = Required(datetime, default=datetime.utcnow)
 
