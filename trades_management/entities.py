@@ -23,7 +23,7 @@ class Broker(db.Entity):
 
     @staticmethod
     @db_session
-    def get_by_uid(uid: UUID) -> "Broker":
+    def get_by_uid(uid: UUID) -> Union["Broker", None]:
         return Broker.get(uid=uid)
 
 
