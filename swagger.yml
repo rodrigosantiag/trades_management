@@ -1,0 +1,155 @@
+openapi: 3.0.0
+info:
+  title: Trades Management API
+  description: Provides several endpoints to create, update and remove several system's resources like brokers, accounts, etc.
+  version: 0.1.0
+servers:
+  - url: https://dev.test.com/v1
+    description: Test server
+paths:
+  /brokers:
+    post:
+      summary: Create broker.
+      description: Create a new broker.
+      requestBody:
+        description: Broker payload
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BrokerRequest"
+            examples:
+              request:
+                $ref: "#/components/examples/BrokerRequest"
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourceCreated"
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                bad_request:
+                  $ref: "#/components/examples/BrokerCreationValidation"
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                unauthorized:
+                  $ref: "#/components/examples/Unauthorized"
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                bad_request:
+                  $ref: "#/components/examples/InternalServerError"
+      x-amazon-apigateway-integration:
+        passthroughBeahavior: when_no_match
+        httpMethod: POST
+        type: aws_proxy
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateBroker.Arn}/invocations"
+
+components:
+  schemas:
+    BrokerRequest:
+      type: object
+      required:
+        - name
+        - user_id
+      properties:
+        name:
+          type: string
+        user_id:
+          type: string
+          format: uid
+    ResourceCreated:
+      type: object
+      properties:
+        uid:
+          type: string
+          format: uid
+    ErrorResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+              messages:
+                type: array
+                items:
+                  type: string
+              trace_id:
+                type: string
+                format: uuid
+  examples:
+    Unauthorized:
+      summary: Unauthorized
+      value:
+        errors:
+          - type: unauthorized
+            messages: [ "Invalid token" ]
+            trace_id: "C3D3DB61-D98F-4839-AC95-D5A2AA14ACFF"
+    InternalServerError:
+      summary: Internal Server Error
+      value:
+        errors:
+          - type: network_error
+            messages: [ "Internal server error" ]
+            trace_id: "C3D3DB61-D98F-4839-AC95-D5A2AA14ACFF"
+    BrokerRequest:
+      summary: Broker request
+      value:
+        name: "Forex Broker"
+        user_id: "6FF2A9FC-BF83-4505-B89B-526CC77105AC"
+    BrokerCreationValidation:
+      summary: BadRequest
+      value:
+        errors:
+          - type: invalid_request
+            messages: [ "'name' is a required field" ]
+            trace_id: "C3D3DB61-D98F-4839-AC95-D5A2AA14ACFF"
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+
+security:
+  - ApiKeyAuth: [ ]
+
+# Amazon API gateway OpenApi integration
+x-amazon-apigateway-request-validator: all
+
+x-amazon-apigateway-request-validators:
+  all:
+    validateRequestBody: true
+    validateRequestParameters: true
+
+x-amazon-apigateway-cors:
+  allowOrigins:
+    - "*"
+  allowMethods:
+    - "OPTIONS"
+    - "POST"
+    - "GET"
+  allowHeaders:
+    - "x-api-key"
+    - "content-type"
+    - "authorization"
