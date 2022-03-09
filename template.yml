@@ -61,6 +61,30 @@ Resources:
       CompatibleRuntimes:
         - python3.8
 
+  # API Gateway
+  ApiGateway:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: trades-management-api
+      StageName: v1
+      DefinitionBody:
+        Fn::Transform:
+          Name: "AWS::Include"
+          Parameters:
+            Location: "./swagger.yml"
+
+  UsagePlan:
+    Type: AWS::ApiGateway::UsagePlan
+    Dependson: ApiGatewayv1Stage
+    Properties:
+      ApiStages:
+        - ApiId:
+            Ref: ApiGateway
+          Stage:
+            Fn::Sub: v1
+      Description: Unlimited usage plan for trades-management
+      UsagePlanName: TradesManagementApi_Unlimited
+
   # Lambda
 
   Migrate:
@@ -73,3 +97,22 @@ Resources:
       Policies:
         - AWSLambda_FullAccess
         - AmazonSSMFullAccess
+
+  CreateBroker:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: trades-management-create-broker
+      CodeUri: trades_management
+      Handler: handlers.create_broker.handle
+      Policies:
+        - AWSLambda_FullAccess
+        - AmazonSSMReadOnlyAccess
+        - AmazonRDSFullAccess
+      Events:
+        PostBroker:
+          Type: Api
+          Properties:
+            Path: /brokers
+            Method: post
+            RestApiId:
+              Ref: ApiGateway
