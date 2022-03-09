@@ -73,8 +73,7 @@ components:
         name:
           type: string
         user_id:
-          type: string
-          format: uid
+          type: number
     ResourceCreated:
       type: object
       properties:
@@ -117,7 +116,7 @@ components:
       summary: Broker request
       value:
         name: "Forex Broker"
-        user_id: "6FF2A9FC-BF83-4505-B89B-526CC77105AC"
+        user_id: 1
     BrokerCreationValidation:
       summary: BadRequest
       value:
