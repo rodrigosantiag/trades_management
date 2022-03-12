@@ -29,9 +29,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ResourceCreated"
               example:
-                summary: Broker created
-                value:
-                  uid: "A3520D74-A9D6-4B20-AC1B-3424F6AD9EB9"
+                uid: "A3520D74-A9D6-4B20-AC1B-3424F6AD9EB9"
         400:
           description: Bad Request
           content:
