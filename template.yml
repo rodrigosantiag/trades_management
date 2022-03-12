@@ -132,6 +132,6 @@ Resources:
           Type: Api
           Properties:
             Path: /brokers
-            Mthod: put
+            Method: put
             RestApiId:
               Ref: ApiGateway
