@@ -130,7 +130,7 @@ Resources:
       Events:
         PutBroker:
           Type: Api
-          Proeprties:
+          Properties:
             Path: /brokers
             Mthod: put
             RestApiId:
