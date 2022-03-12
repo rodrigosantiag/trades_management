@@ -52,7 +52,7 @@ class TestUpdateBroker(unittest.TestCase):
 
     @db_session
     def test_handle_when_broker_does_not_exist_for_user(self):
-        expected = {"message": "Broker not found"}
+        expected = {"error": "Broker not found"}
         payload = {
             "uid": "a21d70b6-1f04-45ff-96c3-b58ff4f5efc1",
             "name": "Broker Name Updated",
@@ -68,7 +68,7 @@ class TestUpdateBroker(unittest.TestCase):
         body = json.loads(response["body"])
 
         self.assertEqual(response["statusCode"], 404)
-        self.assertEqual(body["message"], expected["message"])
+        self.assertEqual(body["error"], expected["error"])
 
     @db_session
     def test_handle_update_without_name(self):
@@ -87,7 +87,7 @@ class TestUpdateBroker(unittest.TestCase):
 
     @db_session
     def test_handle_when_clause_is_incomplete(self):
-        expected = {"message": "Broker not found"}
+        expected = {"error": "Broker not found"}
         payload = {
             "uid": "a21d70b6-1f04-45ff-96c3-b58ff4f5efc1",
             "name": "Broker Name Updated",
@@ -102,7 +102,7 @@ class TestUpdateBroker(unittest.TestCase):
         body = json.loads(response["body"])
 
         self.assertEqual(response["statusCode"], 404)
-        self.assertEqual(body["message"], expected["message"])
+        self.assertEqual(body["error"], expected["error"])
 
     @db_session
     def test_handle_succeed_when_broker_has_no_accounts(self):
