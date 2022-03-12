@@ -106,7 +106,11 @@ class TestUpdateBroker(unittest.TestCase):
 
     @db_session
     def test_handle_succeed_when_broker_has_no_accounts(self):
-        expected = {"uid": str(self.broker.uid), "name": "Broker No Account Updated"}
+        expected = {
+            "uid": str(self.broker.uid),
+            "name": "Broker No Account Updated",
+            "accounts": [],
+        }
 
         payload = {
             "uid": str(self.broker.uid),
@@ -124,6 +128,7 @@ class TestUpdateBroker(unittest.TestCase):
 
         self.assertEqual(response["statusCode"], 200)
         self.assertIsInstance(body, dict)
+
         for key, value in expected.items():
             self.assertEqual(body[key], value)
 
@@ -166,5 +171,6 @@ class TestUpdateBroker(unittest.TestCase):
 
         self.assertEqual(response["statusCode"], 200)
         self.assertIsInstance(body, dict)
+
         for key, value in expected.items():
             self.assertEqual(body[key], value)
