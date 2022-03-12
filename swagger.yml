@@ -28,6 +28,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ResourceCreated"
+              example:
+                uid: "A3520D74-A9D6-4B20-AC1B-3424F6AD9EB9"
         400:
           description: Bad Request
           content:
@@ -36,7 +38,7 @@ paths:
                 $ref: "#/components/schemas/ErrorResponse"
               examples:
                 bad_request:
-                  $ref: "#/components/examples/BrokerCreationValidation"
+                  $ref: "#/components/examples/BrokerValidation"
         401:
           description: Unauthorized
           content:
@@ -61,7 +63,64 @@ paths:
         type: aws_proxy
         uri:
           Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateBroker.Arn}/invocations"
-
+    put:
+      summary: Update broker
+      description: Update an existing broker
+      requestBody:
+        description: Broker update payload
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BrokerUpdateRequest"
+      responses:
+        200:
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BrokerResourceUpdated"
+              examples:
+                with_acounts_updated:
+                  $ref: "#/components/examples/BrokerWithAccountsUpdatedResponse"
+                without_acounts_updated:
+                  $ref: "#/components/examples/BrokerWithoutAccountsUpdatedResponse"
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                bad_request:
+                  $ref: "#/components/examples/BrokerValidation"
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                unauthorized:
+                  $ref: "#/components/examples/Unauthorized"
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                unauthorized:
+                  $ref: "#/components/examples/NotFound"
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                bad_request:
+                  $ref: "#/components/examples/InternalServerError"
 components:
   schemas:
     BrokerRequest:
@@ -74,12 +133,50 @@ components:
           type: string
         user_id:
           type: number
+    BrokerUpdateRequest:
+      type: object
+      required:
+        - name
+        - uid
+        - user_id
+      properties:
+        name:
+          type: string
+        uid:
+          type: string
+          format: uid
+        user_id:
+          type: number
     ResourceCreated:
       type: object
       properties:
         uid:
           type: string
           format: uid
+    BrokerResourceUpdated:
+      type: object
+      properties:
+        uid:
+          type: string
+          format: uid
+        name:
+          type: string
+        accounts:
+          type: array
+          items:
+            type: object
+            properties:
+              uid:
+                type: string
+                format: uid
+              type_account:
+                type: string
+              currency:
+                type: string
+              initial_balance:
+                type: number
+              current_balance:
+                type: number
     ErrorResponse:
       type: object
       properties:
@@ -105,6 +202,13 @@ components:
           - type: unauthorized
             messages: [ "Invalid token" ]
             trace_id: "C3D3DB61-D98F-4839-AC95-D5A2AA14ACFF"
+    NotFound:
+      summary: Not Found
+      value:
+        errors:
+          - type: not_found
+            messages: [ "Resource not found" ]
+            trace_id: "C3D3DB61-D98F-4839-AC95-D5A2AA14ACFF"
     InternalServerError:
       summary: Internal Server Error
       value:
@@ -117,13 +221,36 @@ components:
       value:
         name: "Forex Broker"
         user_id: 1
-    BrokerCreationValidation:
+    BrokerValidation:
       summary: BadRequest
       value:
         errors:
           - type: invalid_request
             messages: [ "'name' is a required field" ]
             trace_id: "C3D3DB61-D98F-4839-AC95-D5A2AA14ACFF"
+    BrokerWithAccountsUpdatedResponse:
+      summary: Broker with accounts updated
+      value:
+        uid: "E160D0D9-2B1D-471E-BA80-FD6A98755B15"
+        name: "Forex Broker Updated"
+        accounts:
+          - uid: "B2355B88-CB7D-45DF-BE18-50CB83029343"
+            type_account: "D"
+            currency: "USD"
+            initial_balance: 10000.0
+            current_balance: 10000.0
+          - uid: "3A30F3A3-7328-477D-8CE5-7C18253D04EB"
+            type_account: "R"
+            currency: "BRL"
+            initial_balance: 1000.0
+            current_balance: 2000.0
+    BrokerWithoutAccountsUpdatedResponse:
+      summary: Broker without accounts updated
+      value:
+        uid: "E160D0D9-2B1D-471E-BA80-FD6A98755B15"
+        name: "Forex Broker Updated"
+        accounts: [ ]
+
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

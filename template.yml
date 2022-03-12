@@ -116,3 +116,22 @@ Resources:
             Method: post
             RestApiId:
               Ref: ApiGateway
+
+  UpdateBroker:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: trades-management-update-broker
+      CodeUri: trades_management
+      Handler: handlers.update_broker.handle
+      Policies:
+        - AWSLambda_FullAccess
+        - AmazonSSMReadonlyAccess
+        - AmazonRDSFullAccess
+      Events:
+        PutBroker:
+          Type: Api
+          Proeprties:
+            Path: /brokers
+            Mthod: put
+            RestApiId:
+              Ref: ApiGateway
