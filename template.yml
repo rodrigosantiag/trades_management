@@ -125,7 +125,7 @@ Resources:
       Handler: handlers.update_broker.handle
       Policies:
         - AWSLambda_FullAccess
-        - AmazonSSMReadonlyAccess
+        - AmazonSSMReadOnlyAccess
         - AmazonRDSFullAccess
       Events:
         PutBroker:
