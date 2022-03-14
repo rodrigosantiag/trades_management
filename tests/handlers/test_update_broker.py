@@ -1,5 +1,6 @@
 import json
 import unittest
+from operator import itemgetter
 
 from pony.orm.core import db_session
 
@@ -171,6 +172,9 @@ class TestUpdateBroker(unittest.TestCase):
 
         self.assertEqual(response["statusCode"], 200)
         self.assertIsInstance(body, dict)
-
-        for key, value in expected.items():
-            self.assertEqual(body[key], value)
+        self.assertEqual(body["name"], expected["name"])
+        self.assertEqual(body["uid"], expected["uid"])
+        self.assertListEqual(
+            sorted(body["accounts"], key=itemgetter("uid")),
+            sorted(expected["accounts"], key=itemgetter("uid")),
+        )
