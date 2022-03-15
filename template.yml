@@ -135,3 +135,22 @@ Resources:
             Method: put
             RestApiId:
               Ref: ApiGateway
+
+  DeleteBroker:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: trades-management-delete-broker
+      CodeUri: trades_management
+      Handler: handlers.delete_broker.handle
+      Policies:
+        - AWSLambda_FullAccess
+        - AmazonSSMReadOnlyAccess
+        - AmazonRDSFullAccess
+      Events:
+        DeleteBroker:
+          Type: Api
+          Properties:
+            Path: /brokers
+            Method: delete
+            RestApiId:
+              Ref: ApiGateway

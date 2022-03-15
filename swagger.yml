@@ -9,8 +9,8 @@ servers:
 paths:
   /brokers:
     post:
-      summary: Create broker.
-      description: Create a new broker.
+      summary: Create broker
+      description: Create a new broker
       requestBody:
         description: Broker payload
         required: true
@@ -73,6 +73,9 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/BrokerUpdateRequest"
+            examples:
+              request:
+                $ref: "#/components/examples/BrokerUpdateRequest"
       responses:
         200:
           description: Updated
@@ -110,7 +113,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               examples:
-                unauthorized:
+                not_found:
                   $ref: "#/components/examples/NotFound"
         500:
           description: Internal Server Error
@@ -127,6 +130,39 @@ paths:
         type: aws_proxy
         uri:
           Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${UpdateBroker.Arn}/invocations"
+    delete:
+      summary: Delete broker
+      description: Delete broker
+      requestBody:
+        description: Broker delete payload
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BrokerDeleteRequest"
+            examples:
+              request:
+                $ref: "#/components/examples/BrokerDeleteRequest"
+      responses:
+        204:
+          description: Deleted
+        404:
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                not_found:
+                  $ref: "#/components/examples/NotFound"
+      x-amazon-apigateway-integration:
+        passthroughBehavior: when_no_match
+        httpMethod: DELETE
+        type: aws_proxy
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DeleteBroker.Arn}/invocations"
+
+
 components:
   schemas:
     BrokerRequest:
@@ -153,6 +189,19 @@ components:
           format: uid
         user_id:
           type: number
+    BrokerDeleteRequest:
+      type: object
+      required:
+        - uid
+        - user_id
+      properties:
+        uid:
+          type: string
+          format: uid
+        user_id:
+          type: number
+    BrokerResourceDeleted:
+      type: null
     ResourceCreated:
       type: object
       properties:
@@ -226,6 +275,17 @@ components:
       summary: Broker request
       value:
         name: "Forex Broker"
+        user_id: 1
+    BrokerUpdateRequest:
+      summary: Broker update request
+      value:
+        uid: "53c7cc64-cd0b-493b-9458-34c0e982c098"
+        name: "Forex Broker Updated"
+        user_id: 1
+    BrokerDeleteRequest:
+      summary: Broker delete request
+      value:
+        uid: "2b79b5c4-0978-48cc-8b8d-aee82d386a13"
         user_id: 1
     BrokerValidation:
       summary: BadRequest
