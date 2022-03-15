@@ -16,17 +16,16 @@ def handle(request: api.Request):
         item = {"uid": broker.uid, "name": broker.name, "accounts": []}
         accounts = list(broker.accounts)
 
-        if accounts:
-            for account in accounts:
-                item["accounts"].append(
-                    {
-                        "uid": account.uid,
-                        "type_account": account.type_account,
-                        "currency": account.currency,
-                        "initial_balance": account.initial_balance,
-                        "current_balance": account.current_balance,
-                    }
-                )
+        for account in accounts:
+            item["accounts"].append(
+                {
+                    "uid": account.uid,
+                    "type_account": account.type_account,
+                    "currency": account.currency,
+                    "initial_balance": account.initial_balance,
+                    "current_balance": account.current_balance,
+                }
+            )
 
         brokers.append(item)
 
