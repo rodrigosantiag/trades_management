@@ -200,8 +200,6 @@ components:
           format: uid
         user_id:
           type: number
-    BrokerResourceDeleted:
-      type: null
     ResourceCreated:
       type: object
       properties:
