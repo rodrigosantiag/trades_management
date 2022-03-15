@@ -7,6 +7,7 @@ from entities import Broker
 @api.handler
 @db_session
 def handle(request: api.Request):
+    # TODO: receive delete request as query parameters and authenticate with header
     payload = request.body
 
     try:
