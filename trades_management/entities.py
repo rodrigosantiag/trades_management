@@ -23,7 +23,7 @@ class Broker(db.Entity):
 
     @staticmethod
     @db_session
-    def get_by_uid(uid: UUID) -> Union["Broker", None]:
+    def get_by_uid(uid: str) -> Union["Broker", None]:
         return Broker.get(uid=uid)
 
 
@@ -61,7 +61,7 @@ class Strategy(db.Entity):
 
     @staticmethod
     @db_session
-    def get_by_uid(uid: UUID) -> Union["Strategy", None]:
+    def get_by_uid(uid: str) -> Union["Strategy", None]:
         return Strategy.get(uid=uid)
 
 
@@ -83,7 +83,7 @@ class Trade(db.Entity):
 
     @staticmethod
     @db_session
-    def get_by_uid(uid: UUID) -> Union["Trade", None]:
+    def get_by_uid(uid: str) -> Union["Trade", None]:
         return Trade.get(uid=uid)
 
 
