@@ -157,7 +157,7 @@ paths:
                   $ref: "#/components/examples/NotFound"
       x-amazon-apigateway-integration:
         passthroughBehavior: when_no_match
-        httpMethod: DELETE
+        httpMethod: POST
         type: aws_proxy
         uri:
           Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DeleteBroker.Arn}/invocations"
