@@ -163,7 +163,7 @@ Resources:
       Handler: handlers.list_brokers.handle
       Policies:
         - AWSLambda_FullAccess
-        - AmazonSSMReadOnly
+        - AmazonSSMReadOnlyAccess
         - AmazonRDSFullAccess
       Events:
         ListBrokers:
