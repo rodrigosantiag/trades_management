@@ -154,3 +154,22 @@ Resources:
             Method: delete
             RestApiId:
               Ref: ApiGateway
+
+  ListBrokers:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: trades-management-list-brokers
+      CodeUri: trades_management
+      Handler: handlers.list_brokers.handle
+      Policies:
+        - AWSLambda_FullAccess
+        - AmazonSSMReadOnly
+        - AmazonRDSFullAccess
+      Events:
+        ListBrokers:
+          Type: Api
+          Properties:
+            Path: /brokers
+            Method: get
+            RestApiId:
+              Ref: ApiGateway
