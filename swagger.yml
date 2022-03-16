@@ -161,16 +161,15 @@ paths:
         type: aws_proxy
         uri:
           Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DeleteBroker.Arn}/invocations"
-  /brokers/{user_id}:
     get:
       summary: Get brokers
       description: List user's brokers
       parameters:
-        - in: path
+        - in: query
           name: user_id
           required: true
           schema:
-            type: string
+            type: number
           description: User ID who owns listed brokers
       responses:
         200:
