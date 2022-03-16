@@ -125,7 +125,7 @@ paths:
                 bad_request:
                   $ref: "#/components/examples/InternalServerError"
       x-amazon-apigateway-integration:
-        passthroughBeahavior: when_no_match
+        passthroughBehavior: when_no_match
         httpMethod: POST
         type: aws_proxy
         uri:
@@ -161,6 +161,46 @@ paths:
         type: aws_proxy
         uri:
           Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DeleteBroker.Arn}/invocations"
+    get:
+      summary: Get brokers
+      description: List user's brokers
+      parameters:
+        - in: query
+          name: user_id
+          required: true
+          schema:
+            type: number
+          description: User ID who owns listed brokers
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListBrokersResponse"
+              examples:
+                user_with_no_broker:
+                  $ref: "#/components/examples/UserWithNoBroker"
+                user_with_brokers_no_account:
+                  $ref: "#/components/examples/UserWithBrokerNoAccount"
+                user_with_brokers_and_acocunts:
+                  $ref: "#/components/examples/UserWithBrokerAndAccount"
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                bad_request:
+                  $ref: "#/components/examples/BrokerValidation"
+      x-amazon-apigateway-integration:
+        passthroughBehavior: when_no_match
+        httpMethod: POST
+        type: aws_proxy
+        uri:
+          Fn:Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ListBrokers.Arn}/invocations"
+
 
 
 components:
@@ -247,6 +287,36 @@ components:
               trace_id:
                 type: string
                 format: uuid
+    ListBrokersResponse:
+      type: object
+      properties:
+        brokers:
+          type: array
+          items:
+            type: object
+            properties:
+              uid:
+                type: string
+                format: uid
+              name:
+                type: string
+              accounts:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    uid:
+                      type: string
+                      format: uid
+                    type_account:
+                      type: string
+                    currency:
+                      type: string
+                    initial_balance:
+                      type: number
+                    current_balance:
+                      type: number
+
   examples:
     Unauthorized:
       summary: Unauthorized
@@ -314,6 +384,34 @@ components:
         uid: "E160D0D9-2B1D-471E-BA80-FD6A98755B15"
         name: "Forex Broker Updated"
         accounts: [ ]
+    UserWithNoBroker:
+      summary: User which have no brokers associated to
+      value:
+        brokers: [ ]
+    UserWithBrokerNoAccount:
+      summary: User with broker associated to but this broker has no accounts
+      value:
+        brokers:
+          - uid: "29EAF90E-0019-4B42-969E-E6F92EE7B3B7"
+            name: "Broker Name Example"
+            accounts: [ ]
+    UserWithBrokerAndAccount:
+      summary: User with broker associated to and this broker has accounts associated to it
+      value:
+        brokers:
+          - uid: "29EAF90E-0019-4B42-969E-E6F92EE7B3B7"
+            name: "Broker Name Example"
+            accounts:
+              - uid: "086FCEE7-88A3-4CAF-A312-3B63AE6FB2D1"
+                type_account: "D"
+                currency: "USD"
+                initial_balance: 10000.0
+                current_balance: 50000.0
+              - uid: "086FCEE7-88A3-4CAF-A312-3B63AE6FB2D1"
+                type_account: "R"
+                currency: "USD"
+                initial_balance: 100.0
+                current_balance: 500.0
 
   securitySchemes:
     ApiKeyAuth:

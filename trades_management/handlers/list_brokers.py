@@ -7,9 +7,12 @@ from entities import Broker
 @api.handler
 @db_session
 def handle(request: api.Request):
-    payload = request.body
+    user_id = request.query.get("user_id")
 
-    user_brokers = Broker.select(user=payload["user_id"])[:]
+    if not user_id:
+        return 400, {"error": "Missing user ID"}
+
+    user_brokers = Broker.select(user=user_id)[:]
     brokers = []
 
     for broker in user_brokers:
