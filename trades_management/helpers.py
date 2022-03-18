@@ -56,15 +56,15 @@ def authorized(func):
                     issuer=settings.JWKS_URL,
                 )
             except jwt.ExpiredSignatureError:
-                return 401, {"error": "token is expired"}
+                raise Exception("token is expired")
             except jwt.JWTClaimsError:
-                return 401, {"error": "please check the audience and issuer"}
+                raise Exception("please check the audience and issuer")
             except Exception:
-                return 401, {"error": "Unable to parse authentication token"}
+                raise Exception("Unable to parse authentication token")
 
             response = func(request)
             return response
 
-        return 401, {"error": "Unable to find appropriate key"}
+        raise Exception("Unable to find appropriate key")
 
     return wrapper

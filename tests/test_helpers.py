@@ -94,17 +94,14 @@ class TestHelpers(unittest.TestCase):
         m_urlopen.return_value.read.return_value = RESPONSE_DATA
         m_jwt.side_effect = jwt.ExpiredSignatureError("Exception test")
         event = {"headers": {"Authorization": f"Bearer {self.token}"}}
-        expected = {"error": "token is expired"}
 
         @helpers.authorized
         def handler(request):
-            return ""
+            return json.dumps({"error": f"Token {request.headers.get('Authorization')} expired"})
 
-        response = handler(event, None)
-        body = json.loads(response["body"])
-
-        self.assertEqual(response["statusCode"], 401)
-        self.assertEqual(body["error"], expected["error"])
+        with self.assertRaises(Exception) as error:
+            handler(event, None)
+            self.assertEqual(str(error), "token is expired")
 
     @patch("helpers.jwt.decode")
     @patch("helpers.urlopen")
@@ -113,17 +110,14 @@ class TestHelpers(unittest.TestCase):
         m_urlopen.return_value.read.return_value = RESPONSE_DATA
         m_jwt.side_effect = jwt.JWTClaimsError("Exception test")
         event = {"headers": {"Authorization": f"Bearer {self.token}"}}
-        expected = {"error": "please check the audience and issuer"}
 
         @helpers.authorized
         def handler(request):
             return ""
 
-        response = handler(event, None)
-        body = json.loads(response["body"])
-
-        self.assertEqual(response["statusCode"], 401)
-        self.assertEqual(body["error"], expected["error"])
+        with self.assertRaises(Exception) as error:
+            handler(event, None)
+            self.assertEqual(str(error), "please check the audience and issuer")
 
     @patch("helpers.jwt.decode")
     @patch("helpers.urlopen")
@@ -132,17 +126,14 @@ class TestHelpers(unittest.TestCase):
         m_urlopen.return_value.read.return_value = RESPONSE_DATA
         m_jwt.side_effect = Exception("Exception test")
         event = {"headers": {"Authorization": f"Bearer {self.token}"}}
-        expected = {"error": "Unable to parse authentication token"}
 
         @helpers.authorized
         def handler(request):
             return ""
 
-        response = handler(event, None)
-        body = json.loads(response["body"])
-
-        self.assertEqual(response["statusCode"], 401)
-        self.assertEqual(body["error"], expected["error"])
+        with self.assertRaises(Exception) as error:
+            handler(event, None)
+            self.assertEqual(str(error), "Unable to parse authentication Token")
 
     @patch("helpers.jwt.get_unverified_header", lambda x: {"kid": "1234"})
     @patch("helpers.jwt.decode", lambda x, y, algorithms, audience, issuer: {})
@@ -151,17 +142,14 @@ class TestHelpers(unittest.TestCase):
         m_urlopen.return_value = MagicMock()
         m_urlopen.return_value.read.return_value = RESPONSE_DATA
         event = {"headers": {"Authorization": f"Bearer {self.token}"}}
-        expected = {"error": "Unable to find appropriate key"}
 
         @helpers.authorized
         def handler(request):
             return ""
 
-        response = handler(event, None)
-        body = json.loads(response["body"])
-
-        self.assertEqual(response["statusCode"], 401)
-        self.assertEqual(body["error"], expected["error"])
+        with self.assertRaises(Exception) as error:
+            handler(event, None)
+            self.assertEqual(str(error), "Unable to find appropriate key")
 
     @patch("helpers.jwt.decode", lambda x, y, algorithms, audience, issuer: {})
     @patch("helpers.urlopen")
