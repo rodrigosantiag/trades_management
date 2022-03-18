@@ -3,6 +3,7 @@ pony==0.7.14
 boto3==1.20.6
 psycopg2-binary==2.9.2
 yoyo-migrations==7.3.2
+python-jose==3.3.0
 
 # serpens
 https://github.com/noverde/serpens/tarball/v2.0.0a4#egg=serpens
