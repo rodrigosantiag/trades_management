@@ -1,11 +1,9 @@
-import json
 import unittest
 from unittest.mock import patch, MagicMock
 
 from jose import jwt
 
-import helpers
-from helpers import get_oauth_token
+from handlers import authorize
 
 RESPONSE_DATA = (
     '{"keys": [{"alg": "RS256", "kty": "RSA", "use": "sig", "n": "0wtlJRY9-ru61'
@@ -33,7 +31,7 @@ RESPONSE_DATA = (
 )
 
 
-class TestHelpers(unittest.TestCase):
+class TestAuthorize(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.token = (
@@ -55,119 +53,119 @@ class TestHelpers(unittest.TestCase):
         authorization_token = None
 
         with self.assertRaises(Exception) as error:
-            get_oauth_token(authorization_token)
+            authorize.get_oauth_token(authorization_token)
             self.assertEqual(str(error), "Authorization header is expected")
 
     def test_get_oauth_token_without_bearer(self):
         authorization_token = "tokentestabcd"
 
         with self.assertRaises(Exception) as error:
-            get_oauth_token(authorization_token)
+            authorize.get_oauth_token(authorization_token)
             self.assertEqual(str(error), "Authorization header must start with 'Bearer'")
 
     def test_get_oauth_token__without_token(self):
         authorization_token = "Bearer "
 
         with self.assertRaises(Exception) as error:
-            get_oauth_token(authorization_token)
+            authorize.get_oauth_token(authorization_token)
             self.assertEqual(str(error), "Token not found")
 
     def test_get_oauth_token_invalid_format(self):
         authorization_token = "Bearer testtokenabcd invalid"
 
         with self.assertRaises(Exception) as error:
-            get_oauth_token(authorization_token)
+            authorize.get_oauth_token(authorization_token)
             self.assertEqual(str(error), "Authorization header must be Bearer token")
 
     def test_get_oauth_token_succeed(self):
         authorization_token = "Bearer testtokenabcd"
 
-        result = get_oauth_token(authorization_token)
+        result = authorize.get_oauth_token(authorization_token)
 
         self.assertIsInstance(result, str)
         self.assertEqual(result, "testtokenabcd")
 
-    @patch("helpers.jwt.decode")
-    @patch("helpers.urlopen")
+    @patch("handlers.authorize.jwt.decode")
+    @patch("handlers.authorize.urlopen")
     def test_authorized_token_expired(self, m_urlopen, m_jwt):
         m_urlopen.return_value = MagicMock()
         m_urlopen.return_value.read.return_value = RESPONSE_DATA
         m_jwt.side_effect = jwt.ExpiredSignatureError("Exception test")
         event = {"headers": {"Authorization": f"Bearer {self.token}"}}
 
-        @helpers.authorized
-        def handler(request):
-            return json.dumps({"error": f"Token {request.headers.get('Authorization')} expired"})
-
         with self.assertRaises(Exception) as error:
-            handler(event, None)
+            authorize.handle(event, {})
             self.assertEqual(str(error), "token is expired")
 
-    @patch("helpers.jwt.decode")
-    @patch("helpers.urlopen")
+    @patch("handlers.authorize.jwt.decode")
+    @patch("handlers.authorize.urlopen")
     def test_authorized_claims_error(self, m_urlopen, m_jwt):
         m_urlopen.return_value = MagicMock()
         m_urlopen.return_value.read.return_value = RESPONSE_DATA
         m_jwt.side_effect = jwt.JWTClaimsError("Exception test")
         event = {"headers": {"Authorization": f"Bearer {self.token}"}}
 
-        @helpers.authorized
-        def handler(request):
-            return ""
-
         with self.assertRaises(Exception) as error:
-            handler(event, None)
+            authorize.handle(event, {})
             self.assertEqual(str(error), "please check the audience and issuer")
 
-    @patch("helpers.jwt.decode")
-    @patch("helpers.urlopen")
+    @patch("handlers.authorize.jwt.decode")
+    @patch("handlers.authorize.urlopen")
     def test_authorized_invalid_header(self, m_urlopen, m_jwt):
         m_urlopen.return_value = MagicMock()
         m_urlopen.return_value.read.return_value = RESPONSE_DATA
         m_jwt.side_effect = Exception("Exception test")
         event = {"headers": {"Authorization": f"Bearer {self.token}"}}
 
-        @helpers.authorized
-        def handler(request):
-            return ""
-
         with self.assertRaises(Exception) as error:
-            handler(event, None)
+            authorize.handle(event, {})
             self.assertEqual(str(error), "Unable to parse authentication Token")
 
-    @patch("helpers.jwt.get_unverified_header", lambda x: {"kid": "1234"})
-    @patch("helpers.jwt.decode", lambda x, y, algorithms, audience, issuer: {})
-    @patch("helpers.urlopen")
+    @patch("handlers.authorize.jwt.get_unverified_header", lambda x: {"kid": "1234"})
+    @patch("handlers.authorize.jwt.decode", lambda x, y, algorithms, audience, issuer: {})
+    @patch("handlers.authorize.urlopen")
     def test_authorized_unable_find_token(self, m_urlopen):
         m_urlopen.return_value = MagicMock()
         m_urlopen.return_value.read.return_value = RESPONSE_DATA
         event = {"headers": {"Authorization": f"Bearer {self.token}"}}
 
-        @helpers.authorized
-        def handler(request):
-            return ""
-
         with self.assertRaises(Exception) as error:
-            handler(event, None)
+            authorize.handle(event, {})
             self.assertEqual(str(error), "Unable to find appropriate key")
 
-    @patch("helpers.jwt.decode", lambda x, y, algorithms, audience, issuer: {})
-    @patch("helpers.urlopen")
-    def test_authorized_succeed(self, m_urlopen):
+    @patch("handlers.authorize.settings")
+    @patch("handlers.authorize.jwt.timegm")
+    @patch("handlers.authorize.urlopen")
+    def test_authorized_succeed(self, m_urlopen, m_datetime, m_settings):
+        m_settings.return_value = MagicMock()
+        m_settings.JWKS_URL = "https://dev-87evx9ru.auth0.com/"
+        m_settings.API_AUDIENCE = "https://expenses-api"
+        m_datetime.return_value = 322327662
         m_urlopen.return_value = MagicMock()
         m_urlopen.return_value.read.return_value = RESPONSE_DATA
 
-        event = {"headers": {"Authorization": f"Bearer {self.token}"}}
-        expected = {
-            "headers": {"Access-Control-Allow-Origin": "*"},
-            "statusCode": 200,
-            "body": json.dumps({"token": f"Bearer {self.token}"}),
+        event = {
+            "headers": {"Authorization": f"Bearer {self.token}"},
+            "methodArn": "arn:aws:execute-api:us-east-1:4343248168333:siu8zlsx0h/v1/GET/",
         }
 
-        @helpers.authorized
-        def handler(request):
-            return json.dumps({"token": request.headers.get("Authorization")})
+        expected = {
+            "principalId": "aW4Cca79xReLWUz0aE2H6kD0O3cXBVtC@clients",
+            "policyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                        "Action": "execute-api:Invoke",
+                        "Effect": "Allow",
+                        "Resource": [
+                            "arn:aws:execute-api:us-east-1:4343248168333:siu8zlsx0h/v1/*/*"
+                        ],
+                    }
+                ],
+            },
+            "context": {},
+        }
 
-        response = handler(event, None)
+        response = authorize.handle(event, {})
 
         self.assertDictEqual(response, expected)
