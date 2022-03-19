@@ -138,7 +138,7 @@ class TestAuthorize(unittest.TestCase):
     @patch("handlers.authorize.urlopen")
     def test_authorized_succeed(self, m_urlopen, m_datetime, m_settings):
         m_settings.return_value = MagicMock()
-        m_settings.JWKS_URL = "https://dev-87evx9ru.auth0.com/"
+        m_settings.JWKS_DOMAIN = "dev-87evx9ru.auth0.com"
         m_settings.API_AUDIENCE = "https://expenses-api"
         m_datetime.return_value = 322327662
         m_urlopen.return_value = MagicMock()
