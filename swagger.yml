@@ -425,7 +425,7 @@ components:
         type: request
         identitySource: method.request.header.authorization
         authorizerUri:
-          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Authorizer.Arn}/invocations"
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${AuthorizerFunction.Arn}/invocations"
         authorizerCredentials:
           Fn::GetAtt: ApiGatewayRole.Arn
         authorizerResultTtlInSeconds: 600
