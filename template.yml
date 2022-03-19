@@ -18,9 +18,13 @@ Mappings:
     development:
       LogLevel: DEBUG
       DatabaseSecret: "parameters:///trades-management/database_url"
+      jwksDomain: "parameters:///trades-management/jwks_domain"
+      apiAudience: "parameters:///trades-management/api_audience"
     production:
       LogLevel: ERROR
       DatabaseSecret: "parameters:///trades-management/database_url"
+      jwksDomain: "parameters:///trades-management/jwks_domain"
+      apiAudience: "parameters:///trades-management/api_audience"
 
 Globals:
   Function:
@@ -85,6 +89,31 @@ Resources:
       Description: Unlimited usage plan for trades-management
       UsagePlanName: TradesManagementApi_Unlimited
 
+  ApiGatewayRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - "apigateway.amazonaws.com"
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: "InvokeAuthorizerFunction"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - lambda:InvokeAsync
+                  - lambda:InvokeFunction
+                Resource: !GetAtt AuthorizerFunction.Arn
+
+
+
   # Lambda
 
   Migrate:
@@ -97,6 +126,28 @@ Resources:
       Policies:
         - AWSLambda_FullAccess
         - AmazonSSMFullAccess
+
+  AuthorizerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: trades-management-authorizer
+      CodeUri: trades_management
+      Handler: handlers.authorize.handle
+      Policies:
+        - AWSLambda_FullAccess
+        - AmazonSSMReadOnlyAccess
+      Environment:
+        Variables:
+          JWKS_DOMAIN:
+            Fn::FindInMap:
+              - Environments
+              - Ref: Environment
+              - jwksDomain
+          API_AUDIENCE:
+            Fn::FindInMap:
+              - Environments
+              - Ref: Environment
+              - apiAudience
 
   CreateBroker:
     Type: AWS::Serverless::Function

@@ -28,7 +28,7 @@ def handle(event, context):
     authorization = event.get("headers", {}).get("Authorization")
     token = get_oauth_token(authorization)
     method_arn = event.get("methodArn")
-    jsonurl = urlopen(f"{settings.JWKS_URL}/.well-known/jwks.json")
+    jsonurl = urlopen(f"https://{settings.JWKS_DOMAIN}/.well-known/jwks.json")
     jwks = json.loads(jsonurl.read())
     unverified_header = jwt.get_unverified_header(token)
     rsa_key = {}
@@ -50,7 +50,7 @@ def handle(event, context):
                 rsa_key,
                 algorithms=["RS256"],
                 audience=settings.API_AUDIENCE,
-                issuer=settings.JWKS_URL,
+                issuer=f"https://{settings.JWKS_DOMAIN}/",
             )
         except jwt.ExpiredSignatureError:
             raise Exception("token is expired")
