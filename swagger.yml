@@ -4,8 +4,10 @@ info:
   description: Provides several endpoints to create, update and remove several system's resources like brokers, accounts, etc.
   version: 0.1.0
 servers:
-  - url: https://dev.test.com/v1
-    description: Test server
+  - url: http://127.0.0.1:3000
+    description: Local server
+  - url: https://a6ry2uj396.execute-api.us-east-1.amazonaws.com/v1
+    description: Development server
 paths:
   /brokers:
     post:
@@ -414,13 +416,26 @@ components:
                 current_balance: 500.0
 
   securitySchemes:
+    Authorizer:
+      type: apiKey
+      in: header
+      name: authorization
+      x-amazon-apigateway-authtype: custom
+      x-amazon-apigateway-authorizer:
+        type: request
+        identitySource: method.request.header.authorization
+        authorizerUri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Authorizer.Arn}/invocations"
+        authorizerCredentials:
+          Fn::GetAtt: ApiGatewayRole.Arn
+        authorizerResultTtlInSeconds: 600
     ApiKeyAuth:
       type: apiKey
       in: header
       name: x-api-key
 
 security:
-  - ApiKeyAuth: [ ]
+  - Authorizer: [ ]
 
 # Amazon API gateway OpenApi integration
 x-amazon-apigateway-request-validator: all
