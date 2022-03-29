@@ -7,8 +7,8 @@ updates:
       interval: "weekly"
       day: "wednesday"
     commit-message:
-      prefix: "requirements"
-      prefix-development: "requirements-dev"
+      prefix: "pip"
+      prefix-development: "pip-dev"
       include: "scope"
     open-pull-requests-limit: 10
     pull-request-branch-name:
