@@ -3,25 +3,12 @@ from typing import Optional
 from urllib.request import urlopen
 
 from jose import jwt
+from serpens import initializers
 
 import authpolicy
 import settings
 
-
-def get_oauth_token(authorization: Optional[str]) -> Optional[str]:
-    if not authorization:
-        raise Exception("Authorization header is expected")
-
-    authorization_parts = authorization.split()
-
-    if authorization_parts[0].lower() != "bearer":
-        raise Exception("Authorization header must start with 'Bearer'")
-    elif len(authorization_parts) == 1:
-        raise Exception("Token not found")
-    elif len(authorization_parts) > 2:
-        raise Exception("Authorization header must be Bearer token")
-
-    return authorization_parts[1]
+initializers.setup()
 
 
 def handle(event, context):
@@ -64,3 +51,19 @@ def handle(event, context):
         return policy.build()
 
     raise Exception("Unable to find appropriate key")
+
+
+def get_oauth_token(authorization: Optional[str]) -> Optional[str]:
+    if not authorization:
+        raise Exception("Authorization header is expected")
+
+    authorization_parts = authorization.split()
+
+    if authorization_parts[0].lower() != "bearer":
+        raise Exception("Authorization header must start with 'Bearer'")
+    elif len(authorization_parts) == 1:
+        raise Exception("Token not found")
+    elif len(authorization_parts) > 2:
+        raise Exception("Authorization header must be Bearer token")
+
+    return authorization_parts[1]
