@@ -6,28 +6,39 @@ from jose import jwt
 from handlers import authorize
 
 RESPONSE_DATA = (
-    '{"keys": [{"alg": "RS256", "kty": "RSA", "use": "sig", "n": "0wtlJRY9-ru61'
-    "LmOgieeI7_rD1oIna9QpBMAOWw8wTuoIhFQFwcIi7MFB7IEfelCPj08vkfLsuFtR8cG07EE4uv"
-    "J78bAqRjMsCvprWp4e2p7hqPnWcpRpDEyHjzirEJle1LPpjLLVaSWgkbrVaOD0lkWkP1T1TkrO"
-    "set_Obh8BwtO-Ww-UfrEwxTyz1646AGkbT2nL8PX0trXrmira8GnrCkFUgTUS61GoTdb9bCJ19"
-    "PLX9Gnxw7J0BtR0GubopXq8KlI0ThVql6ZtVGN2dvmrCPAVAZleM5TVB61m0VSXvGWaF6_GeOh"
-    'bFoyWcyUmFvzWhBm8Q38vWgsSI7oHTkEw", "e": "AQAB", "kid": "NEE1QURBOTM4MzI5R'
-    'kFDNTYxOTU1MDg2ODgwQ0UzMTk1QjYyRkRFQw", "x5t": "NEE1QURBOTM4MzI5RkFDNTYxOT'
-    'U1MDg2ODgwQ0UzMTk1QjYyRkRFQw", "x5c": ["MIIDBzCCAe+gAwIBAgIJNtD9Ozi6j2jJMA'
-    "0GCSqGSIb3DQEBCwUAMCExHzAdBgNVBAMTFmRldi04N2V2eDlydS5hdXRoMC5jb20wHhcNMTkw"
-    "NjIwMTU0NDU4WhcNMzMwMjI2MTU0NDU4WjAhMR8wHQYDVQQDExZkZXYtODdldng5cnUuYXV0aD"
-    "AuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0wtlJRY9+ru61LmOgieeI7/r"
-    "D1oIna9QpBMAOWw8wTuoIhFQFwcIi7MFB7IEfelCPj08vkfLsuFtR8cG07EE4uvJ78bAqRjMsC"
-    "vprWp4e2p7hqPnWcpRpDEyHjzirEJle1LPpjLLVaSWgkbrVaOD0lkWkP1T1TkrOset/Obh8Bwt"
-    "O+Ww+UfrEwxTyz1646AGkbT2nL8PX0trXrmira8GnrCkFUgTUS61GoTdb9bCJ19PLX9Gnxw7J0"
-    "BtR0GubopXq8KlI0ThVql6ZtVGN2dvmrCPAVAZleM5TVB61m0VSXvGWaF6/GeOhbFoyWcyUmFv"
-    "zWhBm8Q38vWgsSI7oHTkEwIDAQABo0IwQDAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBQlGX"
-    "pmYaXFB7Q3eG69Uhjd4cFp/jAOBgNVHQ8BAf8EBAMCAoQwDQYJKoZIhvcNAQELBQADggEBAIzQ"
-    "OF/h4T5WWAdjhcIwdNS7hS2Deq+UxxkRv+uavj6O9mHLuRG1q5onvSFShjECXaYT6OGibn7Ufw"
-    "/JSm3+86ZouMYjBEqGh4OvWRkwARy1YTWUVDGpT2HAwtIq3lfYvhe8P4VfZByp1N4lfn6X2NcJ"
-    "flG+Q+mfXNmRFyyft3Oq51PCZyyAkU7bTun9FmMOyBtmJvQjZ8RXgBLvu9nUcZB8yTVoeUEg4c"
-    "LczQlli/OkiFXhWgrhVr8uF0/9klslMFXtm78iYSgR8/oC+k1pSNd1+ESSt7n6+JiAQ2Co+ZNK"
-    'ta7LTDGAjGjNDymyoCrZpeuYQwwnHYEHu/0khjAxhXo="]}]}'
+    '{"keys": [{"alg": "RS256", "kty": "RSA", "use": "sig", "n": "v1iVDT-fjHxSUsx-7uLkLmy4HbpVwtt3_'
+    "PTlvSweVzgFiUgIRRC_MAfvfM3-tepefOOmSc7Akm4DZTQjEr8rURMhLB2Nro_ynSMaJe_hcF-dulEcMHUKWZnObPkDK6o"
+    "11yTiYhh1bq7BH8s_mRmgKKEumxZHR4zGnVKpQWdgleomlClRlAWBrcshDL1l_tAWl9gRf_m5z3TE5_Gebnx_YT0ptXVi1"
+    "gB3acTxcNdsRHQYoaDhFhG7bAKHMdelMFZzK8a4hgcCACYXOpl_7TZPCQYhTUc4ToVVcsVE2dyxsRvJY7k4khPhpSO5fFy"
+    '2WYR-E9z4ZsLUDs_Wxb_6OjZ-JQ", "e": "AQAB", "kid": "pQrtUF-LUK3Zzh-JhjCRI", "x5t": "ZLwJketm1Lc'
+    'Nyj1y88jx5qJxyMM", "x5c": ["MIIDDTCCAfWgAwIBAgIJb7f//QPd9wgWMA0GCSqGSIb3DQEBCwUAMCQxIjAgBgNVBA'
+    "MTGWRldi1vY3B2aGl4by51cy5hdXRoMC5jb20wHhcNMjIwMzAyMTMzNDE5WhcNMzUxMTA5MTMzNDE5WjAkMSIwIAYDVQQD"
+    "ExlkZXYtb2NwdmhpeG8udXMuYXV0aDAuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAv1iVDT+fjHxSUs"
+    "x+7uLkLmy4HbpVwtt3/PTlvSweVzgFiUgIRRC/MAfvfM3+tepefOOmSc7Akm4DZTQjEr8rURMhLB2Nro/ynSMaJe/hcF+d"
+    "ulEcMHUKWZnObPkDK6o11yTiYhh1bq7BH8s/mRmgKKEumxZHR4zGnVKpQWdgleomlClRlAWBrcshDL1l/tAWl9gRf/m5z3"
+    "TE5/Gebnx/YT0ptXVi1gB3acTxcNdsRHQYoaDhFhG7bAKHMdelMFZzK8a4hgcCACYXOpl/7TZPCQYhTUc4ToVVcsVE2dyx"
+    "sRvJY7k4khPhpSO5fFy2WYR+E9z4ZsLUDs/Wxb/6OjZ+JQIDAQABo0IwQDAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBB"
+    "QkebB0DuquSt6t0zvs2qZRCqmzeTAOBgNVHQ8BAf8EBAMCAoQwDQYJKoZIhvcNAQELBQADggEBAFy3bHZkYcuIw+YGebPr"
+    "J1jGkYpU3s/d1qtLC2fNPzFh+JQshHs9q2Yr/MD+qHXI05ICr4zSb0hK3E/KrAXfeJypyS3rXpAqHIlVTShFsggvkp7WWE"
+    "PWVE2d7CensvbjK4xQxr+KZ6EQLmoZmEyPrgeDkwVmu8lxZxYz8dpGrKwJHLz4klTswErokBrtReZ9j/JFhXY4KMDxrg/Z"
+    "NAAkJSE1nZqJkJfsuLHpWp2EtACYUnh+6qCvxL07JQ7aHxI3Hyim2lBzPfdhk/JhzHOK9nwUkD0atQStsLk28YQOiMfR3q"
+    'W9qSFnABGthLmgkcBRrI1wMTcDqOEiDkF9i8qonYE="]}, {"alg": "RS256", "kty": "RSA", "use": "sig", "n'
+    '": "6cqHTpdWd1OwUm7XVvoJ9ElHnMge24ACk-lJgNDizzWOVuySKB9Fa0lsqPnNly9UM_YWgz1zBm9Kw2sgKkti3d1IwQ'
+    "mEhGLCW5bcRzNnlVM4SeGlfzGrGmBcImbI4IIz2Yrk4n7VcKHrA7UC_CWIlHR3-bxKzPMuwhY0Fweod2u3RSi2rha02gQf"
+    "7VzlRm2JSoznx-GCWyzn8Kyk0xL5bi1ZZeUXO0zRGsgu5l1lhFvFqLg7a-rCaKNShTlxsi0sL-PUumxMIDqP2wb4Na2Pjh"
+    'lt9rPcMrC_4RLRTkqoUUF4NN0KZF3tjZfgvyfmAtVPLUG_pugoXC1FiJjDCGmmAw", "e": "AQAB", "kid": "J8Bbus'
+    'y3cl7Yrz19lyAD-", "x5t": "0FR_Hi3SyVFeKZHTTW090owCqC0", "x5c": ["MIIDDTCCAfWgAwIBAgIJFRdmE2hle'
+    "DZ4MA0GCSqGSIb3DQEBCwUAMCQxIjAgBgNVBAMTGWRldi1vY3B2aGl4by51cy5hdXRoMC5jb20wHhcNMjIwMzAyMTMzNDE"
+    "5WhcNMzUxMTA5MTMzNDE5WjAkMSIwIAYDVQQDExlkZXYtb2NwdmhpeG8udXMuYXV0aDAuY29tMIIBIjANBgkqhkiG9w0BA"
+    "QEFAAOCAQ8AMIIBCgKCAQEA6cqHTpdWd1OwUm7XVvoJ9ElHnMge24ACk+lJgNDizzWOVuySKB9Fa0lsqPnNly9UM/YWgz1"
+    "zBm9Kw2sgKkti3d1IwQmEhGLCW5bcRzNnlVM4SeGlfzGrGmBcImbI4IIz2Yrk4n7VcKHrA7UC/CWIlHR3+bxKzPMuwhY0F"
+    "weod2u3RSi2rha02gQf7VzlRm2JSoznx+GCWyzn8Kyk0xL5bi1ZZeUXO0zRGsgu5l1lhFvFqLg7a+rCaKNShTlxsi0sL+P"
+    "UumxMIDqP2wb4Na2Pjhlt9rPcMrC/4RLRTkqoUUF4NN0KZF3tjZfgvyfmAtVPLUG/pugoXC1FiJjDCGmmAwIDAQABo0IwQ"
+    "DAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBTjNGkc1HZUpYQGKxJ3wh2bJnclKjAOBgNVHQ8BAf8EBAMCAoQwDQYJKoZ"
+    "IhvcNAQELBQADggEBAEaAY17eVO6HyOmTHxx5B3C4ENovS6En2hk9dqhVe3Uwo3+inTYn2a/pTyhdXduRwKzEWXJZAEzuR"
+    "ZjhrN67WTl8xM2l8RJpdz0zG1I/n01lBxcY24ZmCDgYPpz+7A2RWeDJVzNrCf7tC7Dn72yZFhV/JxgiENhSy9FT3zJ9UXs"
+    "XexsZOFUxRab0nwAIgAp9bxsoEI1T0RIcG0nQ6TKf2EDOJJtVjpsQU2RAI11n0chQeTxSAxCuLysdbs1UjFlsTRHk4dj0u"
+    'vpBxnt1Gt0fX695yRx/pHUJkAxmNZCQXXvKGUQ2q8j/GudTdiTKUVrz9H4tNJyfPksI+CP/SOw4NbU="]}]}'
 )
 
 
@@ -35,18 +46,15 @@ class TestAuthorize(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.token = (
-            "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6Ik5FRTFRVVJCT1RNNE16ST"
-            "VSa0ZETlRZeE9UVTFNRGcyT0Rnd1EwVXpNVGsxUWpZeVJrUkZRdyJ9.eyJpc3MiOiJ"
-            "odHRwczovL2Rldi04N2V2eDlydS5hdXRoMC5jb20vIiwic3ViIjoiY"
-            "Vc0Q2NhNzl4UmVMV1V6MGFFMkg2a0QwTzNjWEJWdENAY2xpZW50cyIsImF1ZCI6Imh"
-            "0dHBzOi8vZXhwZW5zZXMtYXBpIiwiaWF0IjoxNTcyMDA2OTU0LCJleHAiOjE1NzIwM"
-            "DY5NjQsImF6cCI6ImFXNENjYTc5eFJlTFdVejBhRTJINmtEME8zY1hCVnRDIiwiZ3R"
-            "5IjoiY2xpZW50LWNyZWRlbnRpYWxzIn0.PUxE7xn52aTCohGiWoSdMBZGiYAHwE5FY"
-            "ie0Y1qUT68IHSTXwXVd6hn02HTah6epvHHVKA2FqcFZ4GGv5VTHEvYpeggiiZMgbxF"
-            "rmTEY0csL6VNkX1eaJGcuehwQCRBKRLL3zKmA5IKGy5GeUnIbpPHLHDxr-GXvgFzsd"
-            "syWlVQvPX2xjeaQ217r2PtxDeqjlf66UYl6oY6AqNS8DH3iryCvIfCcybRZkc_hdy-"
-            "6ZMoKT6Piijvk_aXdm7-QQqKJFHLuEqrVSOuBqqiNfVrG27QzAPuPOxvfXTVLXL2je"
-            "k5meH6n-VWgrBdoMFH93QEszEDowDAEhQPHVs0xj7SIzA"
+            "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InBRcnRVRi1MVUszWnpoLUpoakNSSSJ9.eyJpc3MiO"
+            "iJodHRwczovL2Rldi1vY3B2aGl4by51cy5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8N2NjNzM1OWEtZTU4NS0"
+            "0YzNiLWI1NjctNjdmMzJiZTA2NTE0IiwiYXVkIjoiaHR0cHM6Ly9hNnJ5MnVqMzk2LmV4ZWN1dGUtYXBpLnVzL"
+            "WVhc3QtMS5hbWF6b25hd3MuY29tL3YxIiwiaWF0IjoxNjQ4OTE0ODYwLCJleHAiOjE2NDkwMDEyNjAsImF6cCI"
+            "6IlJJYTB0MDE1ekd3TXRUWTE4Rm9jZnNscm9Fa2xKRXpzIiwiZ3R5IjoicGFzc3dvcmQifQ.lxrYjcFwG2zWP4"
+            "8sJ51GLYrUgnWh-0bO0vDCZCFr4snCRuZBsPvY6MV9SGsr6qEUWf-I20fj6vxOI6XXTVTrZ6dW41-lyJo42IkC"
+            "uDzKawPSKm9kPlzHW-2yDEtDuRIFOxBFj3k_dKlXVUrPZIz5rLW4zbZZLhHSZ5cpxIP6BVK3fnTb26qdQAV5LB"
+            "sHcEH17YBNwJOwQeNwyKQBTc_gsDkfBtAddFNXuswwkNSyjhvL5K8hy29uurYcsstS8sZUyNRiH1QMLet3uoaT"
+            "xni3pWLljp95rSnz5MuFSToLhvJffq3-Kp22b66ty2mGrSXQ-hP20Bjrw5nhZe6fQ0zJzg"
         )
 
     def test_get_oauth_token_none(self):
@@ -133,14 +141,39 @@ class TestAuthorize(unittest.TestCase):
             authorize.handle(event, {})
             self.assertEqual(str(error), "Unable to find appropriate key")
 
+    @patch("handlers.authorize.jwt.decode")
+    @patch("handlers.authorize.urlopen")
+    def test_authorized_invalid_jwt_decoded(self, m_urlopen, m_jwt):
+        m_urlopen.return_value = MagicMock()
+        m_urlopen.return_value.read.return_value = RESPONSE_DATA
+
+        m_jwt.return_value = {
+            "iss": "https://test.com/",
+            "sub": "abcde",
+            "aud": "https://test.com/v1",
+            "iat": 1648914860,
+            "exp": 1649001260,
+            "azp": "RIa0t015zGwMtTY18FocfslroEklJEzs",
+            "gty": "password",
+        }
+
+        event = {
+            "headers": {"Authorization": f"Bearer {self.token}"},
+            "methodArn": "arn:aws:execute-api:us-east-1:4343248168333:siu8zlsx0h/v1/GET/",
+        }
+
+        with self.assertRaises(Exception) as error:
+            authorize.handle(event, {})
+            self.assertEqual(str(error), "Unauthorized")
+
     @patch("handlers.authorize.settings")
     @patch("handlers.authorize.jwt.timegm")
     @patch("handlers.authorize.urlopen")
     def test_authorized_succeed(self, m_urlopen, m_datetime, m_settings):
         m_settings.return_value = MagicMock()
-        m_settings.JWKS_DOMAIN = "dev-87evx9ru.auth0.com"
-        m_settings.API_AUDIENCE = "https://expenses-api"
-        m_datetime.return_value = 322327662
+        m_settings.JWKS_DOMAIN = "dev-ocpvhixo.us.auth0.com"
+        m_settings.API_AUDIENCE = "https://a6ry2uj396.execute-api.us-east-1.amazonaws.com/v1"
+        m_datetime.return_value = 1648919772
         m_urlopen.return_value = MagicMock()
         m_urlopen.return_value.read.return_value = RESPONSE_DATA
 
@@ -150,7 +183,7 @@ class TestAuthorize(unittest.TestCase):
         }
 
         expected = {
-            "principalId": "aW4Cca79xReLWUz0aE2H6kD0O3cXBVtC@clients",
+            "principalId": "auth0|7cc7359a-e585-4c3b-b567-67f32be06514",
             "policyDocument": {
                 "Version": "2012-10-17",
                 "Statement": [
@@ -163,7 +196,7 @@ class TestAuthorize(unittest.TestCase):
                     }
                 ],
             },
-            "context": {},
+            "context": {"sub": "auth0", "user_uuid": "7cc7359a-e585-4c3b-b567-67f32be06514"},
         }
 
         response = authorize.handle(event, {})
