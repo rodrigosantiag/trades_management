@@ -48,6 +48,16 @@ def handle(event, context):
 
         policy = authpolicy.AuthPolicy(payload["sub"], method_arn)
         policy.allowAllMethods()
+
+        try:
+            sub, uuid = payload["sub"].split("|")
+            policy.context = {
+                "sub": sub,
+                "user_uuid": uuid,
+            }
+        except (ValueError, IndexError):
+            raise Exception("Unauthorized")
+
         return policy.build()
 
     raise Exception("Unable to find appropriate key")
