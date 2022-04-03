@@ -101,23 +101,3 @@ class TestCreateBroker(unittest.TestCase):
         self.assertIsInstance(response, dict)
         self.assertEqual(response["statusCode"], 400)
         self.assertEqual(body["error"], "'name' must be of type str")
-
-    @db_session
-    def test_handle_unauthorized_user(self):
-        event = {
-            "headers": {"Authorization": "Bearer foobar"},
-            "requestContext": {
-                "authorizer": {
-                    "sub": "auth0",
-                    "user_uuid": "4f00954e-d957-4dd4-8c60-bc635235e9f9",
-                }
-            },
-            "body": json.dumps(self.data),
-        }
-
-        response = create_broker.handle(event, {})
-        body = json.loads(response["body"])
-
-        self.assertIsInstance(response, dict)
-        self.assertEqual(response["statusCode"], 401)
-        self.assertEqual(body["error"], "Unauthorized")
