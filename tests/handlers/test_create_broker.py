@@ -12,7 +12,7 @@ from handlers import create_broker
 class TestCreateBroker(unittest.TestCase):
     @db_session
     def setUp(self):
-        User(
+        self.user = User(
             uid=uuid4(),
             encrypted_password="test123",
             confirmed_at=datetime(2021, 1, 1, 0, 0, 0),
@@ -23,10 +23,7 @@ class TestCreateBroker(unittest.TestCase):
             updated_at=datetime(1970, 1, 1, 0, 0, 0),
         )
 
-        self.data = {
-            "name": "Broker Post Create",
-            "user_id": User.get(name="John Doe").id,
-        }
+        self.data = {"name": "Broker Post Create"}
 
     @db_session
     def tearDown(self):
@@ -36,7 +33,13 @@ class TestCreateBroker(unittest.TestCase):
     @db_session
     def test_handle_succeed(self):
         event = {
-            "headers": {"x-api-key": "9A093608-BCB2-494C-929D-53EB844453EA"},
+            "headers": {"Authorization": "Bearer foobar"},
+            "requestContext": {
+                "authorizer": {
+                    "sub": "auth0",
+                    "user_uuid": self.user.uid,
+                }
+            },
             "body": json.dumps(self.data),
         }
 
@@ -60,7 +63,13 @@ class TestCreateBroker(unittest.TestCase):
         expected = "'name' is a required field"
 
         event = {
-            "headers": {"x-api-key": "9A093608-BCB2-494C-929D-53EB844453EA"},
+            "headers": {"Authorization": "Bearer foobar"},
+            "requestContext": {
+                "authorizer": {
+                    "sub": "auth0",
+                    "user_uuid": self.user.uid,
+                }
+            },
             "body": json.dumps(self.data),
         }
 
@@ -76,7 +85,13 @@ class TestCreateBroker(unittest.TestCase):
         self.data["name"] = 4356.9
 
         event = {
-            "headers": {"x-api-key": "9A093608-BCB2-494C-929D-53EB844453EA"},
+            "headers": {"Authorization": "Bearer foobar"},
+            "requestContext": {
+                "authorizer": {
+                    "sub": "auth0",
+                    "user_uuid": self.user.uid,
+                }
+            },
             "body": json.dumps(self.data),
         }
 
@@ -86,3 +101,23 @@ class TestCreateBroker(unittest.TestCase):
         self.assertIsInstance(response, dict)
         self.assertEqual(response["statusCode"], 400)
         self.assertEqual(body["error"], "'name' must be of type str")
+
+    @db_session
+    def test_handle_unauthorized_user(self):
+        event = {
+            "headers": {"Authorization": "Bearer foobar"},
+            "requestContext": {
+                "authorizer": {
+                    "sub": "auth0",
+                    "user_uuid": "4f00954e-d957-4dd4-8c60-bc635235e9f9",
+                }
+            },
+            "body": json.dumps(self.data),
+        }
+
+        response = create_broker.handle(event, {})
+        body = json.loads(response["body"])
+
+        self.assertIsInstance(response, dict)
+        self.assertEqual(response["statusCode"], 401)
+        self.assertEqual(body["error"], "Unauthorized")
