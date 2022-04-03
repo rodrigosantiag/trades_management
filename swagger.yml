@@ -211,12 +211,9 @@ components:
       type: object
       required:
         - name
-        - user_id
       properties:
         name:
           type: string
-        user_id:
-          type: number
     BrokerUpdateRequest:
       type: object
       required:
@@ -345,7 +342,6 @@ components:
       summary: Broker request
       value:
         name: "Forex Broker"
-        user_id: 1
     BrokerUpdateRequest:
       summary: Broker update request
       value:
