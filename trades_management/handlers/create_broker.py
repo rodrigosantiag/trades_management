@@ -1,20 +1,16 @@
 from uuid import uuid4
 
-from pony.orm import db_session
 from serpens import api
 
 from entities import Broker, User
+from helpers import authorized
 from schemas import BrokerSchema
 
 
-@api.handler
-@db_session
+@authorized
 def handle(request: api.Request):
     user_uuid = request.authorizer.get("user_uuid")
     user = User.get(uid=user_uuid)
-
-    if not user:
-        return 401, {"error": "Unauthorized"}
 
     try:
         data = BrokerSchema.load(request.body)
