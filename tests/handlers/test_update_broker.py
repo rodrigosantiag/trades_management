@@ -57,11 +57,13 @@ class TestUpdateBroker(unittest.TestCase):
         payload = {
             "uid": "a21d70b6-1f04-45ff-96c3-b58ff4f5efc1",
             "name": "Broker Name Updated",
-            "user_id": self.broker.user.id,
         }
 
         event = {
-            "headers": {"x-api-key": "9A093608-BCB2-494C-929D-53EB844453EA"},
+            "headers": {"Authorization": "Bearer 9A093608-BCB2-494C-929D-53EB844453EA"},
+            "requestContext": {
+                "authorizer": {"sub": "auth0", "user_uuid": str(self.broker.user.uid)}
+            },
             "body": json.dumps(payload),
         }
 
@@ -73,10 +75,13 @@ class TestUpdateBroker(unittest.TestCase):
 
     @db_session
     def test_handle_update_without_name(self):
-        payload = {"uid": str(self.broker.uid), "user_id": self.broker.user.id}
+        payload = {"uid": str(self.broker.uid)}
 
         event = {
-            "headers": {"x-api-key": "9A093608-BCB2-494C-929D-53EB844453EA"},
+            "headers": {"Authorization": "Bearer 9A093608-BCB2-494C-929D-53EB844453EA"},
+            "requestContext": {
+                "authorizer": {"sub": "auth0", "user_uuid": str(self.broker.user.uid)}
+            },
             "body": json.dumps(payload),
         }
 
@@ -90,12 +95,14 @@ class TestUpdateBroker(unittest.TestCase):
     def test_handle_when_clause_is_incomplete(self):
         expected = {"error": "Broker not found"}
         payload = {
-            "uid": "a21d70b6-1f04-45ff-96c3-b58ff4f5efc1",
             "name": "Broker Name Updated",
         }
 
         event = {
-            "headers": {"x-api-key": "9A093608-BCB2-494C-929D-53EB844453EA"},
+            "headers": {"Authorization": "Bearer 9A093608-BCB2-494C-929D-53EB844453EA"},
+            "requestContext": {
+                "authorizer": {"sub": "auth0", "user_uuid": "d69399ed-1b2b-4873-a1d2-5165d373d02d"}
+            },
             "body": json.dumps(payload),
         }
 
@@ -116,11 +123,13 @@ class TestUpdateBroker(unittest.TestCase):
         payload = {
             "uid": str(self.broker.uid),
             "name": "Broker No Account Updated",
-            "user_id": self.broker.user.id,
         }
 
         event = {
-            "headers": {"x-api-key": "9A093608-BCB2-494C-929D-53EB844453EA"},
+            "headers": {"Authorization": "Bearer 9A093608-BCB2-494C-929D-53EB844453EA"},
+            "requestContext": {
+                "authorizer": {"sub": "auth0", "user_uuid": str(self.broker.user.uid)}
+            },
             "body": json.dumps(payload),
         }
 
@@ -159,11 +168,13 @@ class TestUpdateBroker(unittest.TestCase):
         payload = {
             "uid": "29d49a64-220d-452c-a6d4-9ffc67989534",
             "name": "Broker With Accounts Updated",
-            "user_id": self.broker_with_accounts.user.id,
         }
 
         event = {
-            "headers": {"x-api-key": "9A093608-BCB2-494C-929D-53EB844453EA"},
+            "headers": {"Authorization": "Bearer 9A093608-BCB2-494C-929D-53EB844453EA"},
+            "requestContext": {
+                "authorizer": {"sub": "auth0", "user_uuid": str(self.broker_with_accounts.user.uid)}
+            },
             "body": json.dumps(payload),
         }
 
