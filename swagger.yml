@@ -219,15 +219,12 @@ components:
       required:
         - name
         - uid
-        - user_id
       properties:
         name:
           type: string
         uid:
           type: string
           format: uid
-        user_id:
-          type: number
     BrokerDeleteRequest:
       type: object
       required:
@@ -347,7 +344,6 @@ components:
       value:
         uid: "53c7cc64-cd0b-493b-9458-34c0e982c098"
         name: "Forex Broker Updated"
-        user_id: 1
     BrokerDeleteRequest:
       summary: Broker delete request
       value:
