@@ -1,17 +1,18 @@
-from pony.orm import db_session
 from serpens import api
 
-from entities import Broker
+from entities import Broker, User
+from helpers import authorized
 from schemas import BrokerSchema
 
 
-@api.handler
-@db_session
+@authorized
 def handle(request: api.Request):
     payload = request.body
+    user_uuid = request.authorizer.get("user_uuid")
+    user = User.get(uid=user_uuid)
 
     try:
-        broker = Broker.get(uid=payload["uid"], user=payload["user_id"])
+        broker = Broker.get(uid=payload["uid"], user=user)
     except (ValueError, KeyError, IndexError):
         broker = None
 
