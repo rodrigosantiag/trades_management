@@ -94,21 +94,29 @@ class TestListBrokers(unittest.TestCase):
         User.select().delete()
 
     @db_session
-    def test_handle_missing_user_id(self):
-        event = {"headers": {"x-api-key": "api-key"}, "queryStringParameters": {}}
+    def test_handle_unauthorized_user(self):
+        event = {
+            "headers": {"Authorization": "Bearer api-key"},
+            "requestContext": {
+                "authorizer": {"sub": "auth0", "user_uuid": "B0C066B1-EDEA-44CA-94E6-921F2563C96F"}
+            },
+        }
 
         result = list_brokers.handle(event, {})
         body = json.loads(result["body"])
 
-        self.assertEqual(result["statusCode"], 400)
+        self.assertEqual(result["statusCode"], 401)
         self.assertIsInstance(body, dict)
-        self.assertEqual(body["error"], "Missing user ID")
+        self.assertEqual(body["error"], "Unauthorized")
 
     @db_session
     def test_handle_user_with_no_broker(self):
-        query_parameters = {"user_id": self.user_without_broker.id}
-
-        event = {"headers": {"x-api-key": "api-key"}, "queryStringParameters": query_parameters}
+        event = {
+            "headers": {"Authorization": "Bearer api-key"},
+            "requestContext": {
+                "authorizer": {"sub": "auth0", "user_uuid": self.user_without_broker.uid}
+            },
+        }
 
         result = list_brokers.handle(event, {})
         body = json.loads(result["body"])
@@ -125,9 +133,12 @@ class TestListBrokers(unittest.TestCase):
             ]
         }
 
-        query_parameters = {"user_id": self.user_with_one_broker.id}
-
-        event = {"headers": {"x-api-key": "api-key"}, "queryStringParameters": query_parameters}
+        event = {
+            "headers": {"Authorization": "Bearer api-key"},
+            "requestContext": {
+                "authorizer": {"sub": "auth0", "user_uuid": self.user_with_one_broker.uid}
+            },
+        }
 
         result = list_brokers.handle(event, {})
         body = json.loads(result["body"])
@@ -178,9 +189,12 @@ class TestListBrokers(unittest.TestCase):
             ],
         }
 
-        query_parameters = {"user_id": self.user_with_two_brokers.id}
-
-        event = {"headers": {"x-api-key": "api-key"}, "queryStringParameters": query_parameters}
+        event = {
+            "headers": {"Authorization": "Bearer api-key"},
+            "requestContext": {
+                "authorizer": {"sub": "auth0", "user_uuid": self.user_with_two_brokers.uid}
+            },
+        }
 
         result = list_brokers.handle(event, {})
         body = json.loads(result["body"])
