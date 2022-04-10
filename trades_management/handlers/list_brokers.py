@@ -1,18 +1,15 @@
-from pony.orm import db_session
 from serpens import api
 
-from entities import Broker
+from entities import Broker, User
+from helpers import authorized
 
 
-@api.handler
-@db_session
+@authorized
 def handle(request: api.Request):
-    user_id = request.query.get("user_id")
+    user_uuid = request.authorizer.get("user_uuid")
+    user = User.get(uid=user_uuid)
 
-    if not user_id:
-        return 400, {"error": "Missing user ID"}
-
-    user_brokers = Broker.select(user=user_id)[:]
+    user_brokers = Broker.select(user=user)[:]
     brokers = []
 
     for broker in user_brokers:

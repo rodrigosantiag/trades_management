@@ -166,13 +166,6 @@ paths:
     get:
       summary: Get brokers
       description: List user's brokers
-      parameters:
-        - in: query
-          name: user_id
-          required: true
-          schema:
-            type: number
-          description: User ID who owns listed brokers
       responses:
         200:
           description: OK
@@ -196,6 +189,24 @@ paths:
               examples:
                 bad_request:
                   $ref: "#/components/examples/BrokerValidation"
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                unauthorized:
+                  $ref: "#/components/examples/Unauthorized"
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                bad_request:
+                  $ref: "#/components/examples/InternalServerError"
       x-amazon-apigateway-integration:
         passthroughBehavior: when_no_match
         httpMethod: POST
