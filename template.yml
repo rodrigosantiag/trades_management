@@ -201,7 +201,7 @@ Resources:
         DeleteBroker:
           Type: Api
           Properties:
-            Path: /brokers
+            Path: /brokers/{uuid}
             Method: delete
             RestApiId:
               Ref: ApiGateway
