@@ -17,7 +17,7 @@ def handle(request: api.Request):
     try:
         broker = Broker.get(uid=broker_uuid, user=user)
     except ValueError:
-        return 404, {"error": "Broker not found"}
+        broker = None
 
     if not broker:
         return 404, {"error": "Broker not found"}
