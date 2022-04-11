@@ -132,37 +132,6 @@ paths:
         type: aws_proxy
         uri:
           Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${UpdateBroker.Arn}/invocations"
-    delete:
-      summary: Delete broker
-      description: Delete broker
-      requestBody:
-        description: Broker delete payload
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/BrokerDeleteRequest"
-            examples:
-              request:
-                $ref: "#/components/examples/BrokerDeleteRequest"
-      responses:
-        204:
-          description: Deleted
-        404:
-          description: Not found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-              examples:
-                not_found:
-                  $ref: "#/components/examples/NotFound"
-      x-amazon-apigateway-integration:
-        passthroughBehavior: when_no_match
-        httpMethod: POST
-        type: aws_proxy
-        uri:
-          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DeleteBroker.Arn}/invocations"
     get:
       summary: Get brokers
       description: List user's brokers
@@ -213,6 +182,55 @@ paths:
         type: aws_proxy
         uri:
           Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ListBrokers.Arn}/invocations"
+  /brokers/{uuid}:
+    delete:
+      summary: Delete broker
+      description: Delete broker
+      parameters:
+        - in: path
+          name: uuid
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Broker UUID
+      responses:
+        204:
+          description: Deleted
+        404:
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                not_found:
+                  $ref: "#/components/examples/NotFound"
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                unauthorized:
+                  $ref: "#/components/examples/Unauthorized"
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                bad_request:
+                  $ref: "#/components/examples/InternalServerError"
+      x-amazon-apigateway-integration:
+        passthroughBehavior: when_no_match
+        httpMethod: POST
+        type: aws_proxy
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DeleteBroker.Arn}/invocations"
+
 
 
 
@@ -236,17 +254,6 @@ components:
         uid:
           type: string
           format: uid
-    BrokerDeleteRequest:
-      type: object
-      required:
-        - uid
-        - user_id
-      properties:
-        uid:
-          type: string
-          format: uid
-        user_id:
-          type: number
     ResourceCreated:
       type: object
       properties:
@@ -355,11 +362,6 @@ components:
       value:
         uid: "53c7cc64-cd0b-493b-9458-34c0e982c098"
         name: "Forex Broker Updated"
-    BrokerDeleteRequest:
-      summary: Broker delete request
-      value:
-        uid: "2b79b5c4-0978-48cc-8b8d-aee82d386a13"
-        user_id: 1
     BrokerValidation:
       summary: BadRequest
       value:
