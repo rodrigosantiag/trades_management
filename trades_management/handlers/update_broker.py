@@ -10,9 +10,10 @@ def handle(request: api.Request):
     payload = request.body
     user_uuid = request.authorizer.get("user_uuid")
     user = User.get(uid=user_uuid)
+    broker_uuid = request.path.get("uuid")
 
     try:
-        broker = Broker.get(uid=payload["uid"], user=user)
+        broker = Broker.get(uid=broker_uuid, user=user)
     except (ValueError, KeyError, IndexError):
         broker = None
 

@@ -54,10 +54,27 @@ class TestUpdateBroker(unittest.TestCase):
     @db_session
     def test_handle_when_broker_does_not_exist_for_user(self):
         expected = {"error": "Broker not found"}
-        payload = {
-            "uid": "a21d70b6-1f04-45ff-96c3-b58ff4f5efc1",
-            "name": "Broker Name Updated",
+        payload = {"name": "Broker Name Updated"}
+
+        event = {
+            "headers": {"Authorization": "Bearer 9A093608-BCB2-494C-929D-53EB844453EA"},
+            "pathParameters": {"uuid": "a21d70b6-1f04-45ff-96c3-b58ff4f5efc1"},
+            "requestContext": {
+                "authorizer": {"sub": "auth0", "user_uuid": str(self.broker.user.uid)}
+            },
+            "body": json.dumps(payload),
         }
+
+        response = update_broker.handle(event, {})
+        body = json.loads(response["body"])
+
+        self.assertEqual(response["statusCode"], 404)
+        self.assertEqual(body["error"], expected["error"])
+
+    @db_session
+    def test_handle_when_broker_uuid_in_path_is_missing(self):
+        expected = {"error": "Broker not found"}
+        payload = {"name": "Broker Name Updated"}
 
         event = {
             "headers": {"Authorization": "Bearer 9A093608-BCB2-494C-929D-53EB844453EA"},
@@ -75,10 +92,11 @@ class TestUpdateBroker(unittest.TestCase):
 
     @db_session
     def test_handle_update_without_name(self):
-        payload = {"uid": str(self.broker.uid)}
+        payload = {}
 
         event = {
             "headers": {"Authorization": "Bearer 9A093608-BCB2-494C-929D-53EB844453EA"},
+            "pathParameters": {"uuid": str(self.broker.uid)},
             "requestContext": {
                 "authorizer": {"sub": "auth0", "user_uuid": str(self.broker.user.uid)}
             },
@@ -92,27 +110,6 @@ class TestUpdateBroker(unittest.TestCase):
         self.assertIn("error", body)
 
     @db_session
-    def test_handle_when_clause_is_incomplete(self):
-        expected = {"error": "Broker not found"}
-        payload = {
-            "name": "Broker Name Updated",
-        }
-
-        event = {
-            "headers": {"Authorization": "Bearer 9A093608-BCB2-494C-929D-53EB844453EA"},
-            "requestContext": {
-                "authorizer": {"sub": "auth0", "user_uuid": "d69399ed-1b2b-4873-a1d2-5165d373d02d"}
-            },
-            "body": json.dumps(payload),
-        }
-
-        response = update_broker.handle(event, {})
-        body = json.loads(response["body"])
-
-        self.assertEqual(response["statusCode"], 404)
-        self.assertEqual(body["error"], expected["error"])
-
-    @db_session
     def test_handle_succeed_when_broker_has_no_accounts(self):
         expected = {
             "uid": str(self.broker.uid),
@@ -120,13 +117,11 @@ class TestUpdateBroker(unittest.TestCase):
             "accounts": [],
         }
 
-        payload = {
-            "uid": str(self.broker.uid),
-            "name": "Broker No Account Updated",
-        }
+        payload = {"name": "Broker No Account Updated"}
 
         event = {
             "headers": {"Authorization": "Bearer 9A093608-BCB2-494C-929D-53EB844453EA"},
+            "pathParameters": {"uuid": str(self.broker.uid)},
             "requestContext": {
                 "authorizer": {"sub": "auth0", "user_uuid": str(self.broker.user.uid)}
             },
@@ -166,12 +161,12 @@ class TestUpdateBroker(unittest.TestCase):
         }
 
         payload = {
-            "uid": "29d49a64-220d-452c-a6d4-9ffc67989534",
             "name": "Broker With Accounts Updated",
         }
 
         event = {
             "headers": {"Authorization": "Bearer 9A093608-BCB2-494C-929D-53EB844453EA"},
+            "pathParameters": {"uuid": "29d49a64-220d-452c-a6d4-9ffc67989534"},
             "requestContext": {
                 "authorizer": {"sub": "auth0", "user_uuid": str(self.broker_with_accounts.user.uid)}
             },
