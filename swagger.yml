@@ -65,73 +65,6 @@ paths:
         type: aws_proxy
         uri:
           Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateBroker.Arn}/invocations"
-    put:
-      summary: Update broker
-      description: Update an existing broker
-      requestBody:
-        description: Broker update payload
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/BrokerUpdateRequest"
-            examples:
-              request:
-                $ref: "#/components/examples/BrokerUpdateRequest"
-      responses:
-        200:
-          description: Updated
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BrokerResourceUpdated"
-              examples:
-                with_acounts_updated:
-                  $ref: "#/components/examples/BrokerWithAccountsUpdatedResponse"
-                without_acounts_updated:
-                  $ref: "#/components/examples/BrokerWithoutAccountsUpdatedResponse"
-        400:
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-              examples:
-                bad_request:
-                  $ref: "#/components/examples/BrokerValidation"
-        401:
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-              examples:
-                unauthorized:
-                  $ref: "#/components/examples/Unauthorized"
-        404:
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-              examples:
-                not_found:
-                  $ref: "#/components/examples/NotFound"
-        500:
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-              examples:
-                bad_request:
-                  $ref: "#/components/examples/InternalServerError"
-      x-amazon-apigateway-integration:
-        passthroughBehavior: when_no_match
-        httpMethod: POST
-        type: aws_proxy
-        uri:
-          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${UpdateBroker.Arn}/invocations"
     get:
       summary: Get brokers
       description: List user's brokers
@@ -183,6 +116,81 @@ paths:
         uri:
           Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ListBrokers.Arn}/invocations"
   /brokers/{uuid}:
+    patch:
+      summary: Update broker
+      description: Update an existing broker
+      parameters:
+        - in: path
+          name: uuid
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Broker UUID
+      requestBody:
+        description: Broker update payload
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BrokerUpdateRequest"
+            examples:
+              request:
+                $ref: "#/components/examples/BrokerUpdateRequest"
+      responses:
+        200:
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BrokerResourceUpdated"
+              examples:
+                with_accounts_updated:
+                  $ref: "#/components/examples/BrokerWithAccountsUpdatedResponse"
+                without_accounts_updated:
+                  $ref: "#/components/examples/BrokerWithoutAccountsUpdatedResponse"
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                bad_request:
+                  $ref: "#/components/examples/BrokerValidation"
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                unauthorized:
+                  $ref: "#/components/examples/Unauthorized"
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                not_found:
+                  $ref: "#/components/examples/NotFound"
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                bad_request:
+                  $ref: "#/components/examples/InternalServerError"
+      x-amazon-apigateway-integration:
+        passthroughBehavior: when_no_match
+        httpMethod: POST
+        type: aws_proxy
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${UpdateBroker.Arn}/invocations"
     delete:
       summary: Delete broker
       description: Delete broker
@@ -247,13 +255,9 @@ components:
       type: object
       required:
         - name
-        - uid
       properties:
         name:
           type: string
-        uid:
-          type: string
-          format: uid
     ResourceCreated:
       type: object
       properties:
@@ -360,7 +364,6 @@ components:
     BrokerUpdateRequest:
       summary: Broker update request
       value:
-        uid: "53c7cc64-cd0b-493b-9458-34c0e982c098"
         name: "Forex Broker Updated"
     BrokerValidation:
       summary: BadRequest
