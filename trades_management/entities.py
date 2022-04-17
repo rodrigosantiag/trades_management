@@ -32,9 +32,9 @@ class Account(db.Entity):
 
     id = PrimaryKey(int, auto=True)
     uid = Required(UUID, default=uuid4)
-    type_account = Optional(str, nullable=True)
-    currency = Optional(str, nullable=True)
-    initial_balance = Optional(float, nullable=True)
+    type_account = Required(str)
+    currency = Required(str)
+    initial_balance = Required(float)
     current_balance = Optional(float, nullable=True)
     broker = Required(Broker, column="broker_id")
     user = Required(lambda: User, column="user_id")
