@@ -42,4 +42,4 @@ def handle(request: api.Request):
         updated_at=data.updated_at,
     )
 
-    return 201, {"uid": account.uid}
+    return 201, {"uid": str(account.uid)}
