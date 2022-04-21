@@ -224,3 +224,22 @@ Resources:
             Method: get
             RestApiId:
               Ref: ApiGateway
+
+  CreateAccount:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: trades-management-create-account
+      CodeUri: trades_management
+      Handler: handlers.create_account.handle
+      Policies:
+        - AWSLambda_FullAccess
+        - AmazonSSMReadOnlyAccess
+        - AmazonRDSFullAccess
+      Events:
+        CreateAccount:
+          Type: Api
+          Properties:
+            Path: /accounts
+            Method: post
+            RestApiId:
+              Ref: ApiGateway
