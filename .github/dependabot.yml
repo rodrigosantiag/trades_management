@@ -4,8 +4,7 @@ updates:
     directory: "/"
     # Check the npm registry for updates every day (weekdays)
     schedule:
-      interval: "weekly"
-      day: "wednesday"
+      interval: "monthly"
     commit-message:
       prefix: "pip"
       prefix-development: "pip-dev"
@@ -19,8 +18,7 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
-      day: "sunday"
+      interval: "monthly"
     commit-message:
       prefix: "github-actions"
       include: "scope"
