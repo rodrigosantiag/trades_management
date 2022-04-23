@@ -60,7 +60,7 @@ paths:
                 bad_request:
                   $ref: "#/components/examples/InternalServerError"
       x-amazon-apigateway-integration:
-        passthroughBeahavior: when_no_match
+        passthroughBehavior: when_no_match
         httpMethod: POST
         type: aws_proxy
         uri:
@@ -238,6 +238,62 @@ paths:
         type: aws_proxy
         uri:
           Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DeleteBroker.Arn}/invocations"
+  /accounts:
+    post:
+      summary: Create account
+      description: Create a new account
+      requestBody:
+        description: Account payload
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AccountRequest"
+            examples:
+              request:
+                $ref: "#/components/examples/AccountRequest"
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourceCreated"
+              example:
+                uid: "e13a2e3c-44b2-41bc-8d4b-72356358221c"
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                bad_request:
+                  $ref: "#/components/examples/AccountValidation"
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                unauthorized:
+                  $ref: "#/components/examples/Unauthorized"
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                internal_server_error:
+                  $ref: "#/components/examples/InternalServerError"
+      x-amazon-apigateway-integration:
+        passthroughBehavior: when_no_match
+        httpMethod: POST
+        type: aws_proxy
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateAccount.Arn}/invocations"
 
 
 
@@ -288,6 +344,23 @@ components:
                 type: number
               current_balance:
                 type: number
+    AccountRequest:
+      type: object
+      required:
+        - type_account
+        - currency
+        - initial_balance
+        - broker_uid
+      properties:
+        type_account:
+          type: string
+        currency:
+          type: string
+        initial_balance:
+          type: number
+        broker_uid:
+          type: string
+          format: uid
     ErrorResponse:
       type: object
       properties:
@@ -422,6 +495,20 @@ components:
                 currency: "USD"
                 initial_balance: 100.0
                 current_balance: 500.0
+    AccountRequest:
+      summary: Account request
+      value:
+        type_account: "R"
+        currency: "USD"
+        initial_balance: 100.0
+        broker_uid: "5e371f58-b6b1-4e58-99de-24c279f4e24e"
+    AccountValidation:
+      summary: Account bad request
+      value:
+        errors:
+          - type: invalid_request
+            messages: [ "'type_account' is a required field" ]
+            trace_id: "4a399e08-4cb2-4b96-a6f2-be84383ea90e"
 
   securitySchemes:
     Authorizer:
