@@ -7,7 +7,6 @@ from entities import User, Broker, Account
 from handlers import list_accounts
 
 
-@unittest.skip
 class TestListAccounts(unittest.TestCase):
     @classmethod
     @db_session
@@ -154,7 +153,7 @@ class TestListAccounts(unittest.TestCase):
         self.assertDictEqual(body["accounts"][3], self.expected["accounts"][3])
 
     def test_handle_list_filtered_accounts_by_broker(self):
-        self.event["queryParameters"] = {
+        self.event["queryStringParameters"] = {
             "broker_uid": "f124fd21-f248-4e52-897b-4a55e35e8272",
         }
 
@@ -168,7 +167,7 @@ class TestListAccounts(unittest.TestCase):
         self.assertDictEqual(body["accounts"][1], self.expected["accounts"][1])
 
     def test_handle_list_filtered_accounts_by_type_account(self):
-        self.event["queryParameters"] = {
+        self.event["queryStringParameters"] = {
             "type_account": "D",
         }
 
@@ -182,7 +181,7 @@ class TestListAccounts(unittest.TestCase):
         self.assertDictEqual(body["accounts"][1], self.expected["accounts"][3])
 
     def test_handle_list_filtered_accounts_by_broker_and_type_account(self):
-        self.event["queryParameters"] = {
+        self.event["queryStringParameters"] = {
             "broker_uid": "9c4990d4-a582-438c-b3e5-41235941422c",
             "type_account": "R",
         }
@@ -194,15 +193,3 @@ class TestListAccounts(unittest.TestCase):
         self.assertIsInstance(body, dict)
         self.assertEqual(len(body["accounts"]), 1)
         self.assertDictEqual(body["accounts"][0], self.expected["accounts"][2])
-
-    def test_handle_list_filtered_accounts_by_invalid_parameter(self):
-        self.event["queryParameters"] = {
-            "broker_name": "Broker 1",
-        }
-
-        result = list_accounts.handle(self.event, {})
-        body = json.loads(result["body"])
-
-        self.assertEqual(result["statusCode"], 400)
-        self.assertIsInstance(body, dict)
-        self.assertEqual(body["error"], "Invalid query parameter")
