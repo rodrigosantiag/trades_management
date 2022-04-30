@@ -294,6 +294,35 @@ paths:
         type: aws_proxy
         uri:
           Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateAccount.Arn}/invocations"
+    get:
+      summary: List accounts
+      description: List user's accounts
+      parameters:
+        - in: query
+          name: broker_uid
+          required: false
+          schema:
+            type: string
+            format: uid
+          description: Broker UUID to filter accounts from this broker
+        - in: query
+          name: type_account
+          required: false
+          schema:
+            type: string
+          description: Type of account used to filter accounts of that type. Use "R" for real accounts or "D" for demo accounts
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListAccountsResponse"
+              examples:
+                user_with_accounts:
+                  $ref: "#/components/examples/UserWithAccounts"
+                user_with_no_accounts:
+                  $ref: "#/components/examples/UserWithNoAccounts"
 
 
 
@@ -407,6 +436,30 @@ components:
                       type: number
                     current_balance:
                       type: number
+    ListAccountsResponse:
+      type: object
+      properties:
+        accounts:
+          type: array
+          items:
+            type: object
+            properties:
+              uid:
+                type: string
+                format: uid
+              type_account:
+                type: string
+              currency:
+                type: string
+              initial_balance:
+                type: number
+              current_balance:
+                type: number
+              broker:
+                type: object
+                properties:
+                  name:
+                    type: string
 
   examples:
     Unauthorized:
@@ -509,6 +562,21 @@ components:
           - type: invalid_request
             messages: [ "'type_account' is a required field" ]
             trace_id: "4a399e08-4cb2-4b96-a6f2-be84383ea90e"
+    UserWithAccounts:
+      summary: User with accounts
+      value:
+        accounts:
+          - uid: "b9b52eac-3510-4c5f-8a2b-127b2dc22b9b"
+            type_account: "R"
+            currency: "USD"
+            initial_balance: 100.0
+            current_balance: 100.0
+            broker:
+              name: "Broker gtest"
+    UserWithNoAccounts:
+      summary: User with no accounts
+      value:
+        accounts: [ ]
 
   securitySchemes:
     Authorizer:
