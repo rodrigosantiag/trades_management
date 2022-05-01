@@ -323,6 +323,30 @@ paths:
                   $ref: "#/components/examples/UserWithAccounts"
                 user_with_no_accounts:
                   $ref: "#/components/examples/UserWithNoAccounts"
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                unauthorized:
+                  $ref: "#/components/examples/Unauthorized"
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                bad_request:
+                  $ref: "#/components/examples/InternalServerError"
+      x-amazon-apigateway-integration:
+        passthroughBehavior: when_no_match
+        httpMethod: POST
+        type: aws_proxy
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ListAccounts.Arn}/invocations"
 
 
 
