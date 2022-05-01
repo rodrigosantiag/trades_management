@@ -243,3 +243,22 @@ Resources:
             Method: post
             RestApiId:
               Ref: ApiGateway
+
+  ListAccounts:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: trades-management-list-accounts
+      CodeUri: trades_management
+      Handler: handlers.list_accounts.handle
+      Policies:
+        - AWSLambda_FullAccess
+        - AmazonSSMReadOnlyAccess
+        - AmazonRDSFullAccess
+      Events:
+        ListAccounts:
+          Type: Api
+          Properties:
+            Path: /accounts
+            Method: get
+            RestApiId:
+              Ref: ApiGateway
