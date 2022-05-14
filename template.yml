@@ -262,3 +262,22 @@ Resources:
             Method: get
             RestApiId:
               Ref: ApiGateway
+
+  GetAccount:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: trades-management-get-account
+      CodeUri: trades_management
+      Handler: handlers.get_account.handle
+      Policies:
+        - AWSLambda_FullAccess
+        - AmazonSSMReadOnlyAccess
+        - AmazonRDSFullAccess
+      Events:
+        GetAccount:
+          Type: Api
+          Properties:
+            Path: /accounts/{uuid}
+            Method: get
+            RestApiId:
+              Ref: ApiGateway
