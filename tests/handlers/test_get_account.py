@@ -7,7 +7,6 @@ from entities import User, Broker, Account
 from handlers import get_account
 
 
-@unittest.skip
 class TestGetAccount(unittest.TestCase):
     @classmethod
     @db_session
@@ -57,12 +56,25 @@ class TestGetAccount(unittest.TestCase):
         result = get_account.handle(self.event, {})
         body = json.loads(result["body"])
 
-        # expected = {
-        #     "broker_uuid": "77c60c8c-46f2-4f67-8956-762f4bfd0210",
-        #     "type_account": "R",
-        #     # TODO: continue tests
-        # }
+        expected = {
+            "broker_uuid": "77c60c8c-46f2-4f67-8956-762f4bfd0210",
+            "type_account": "R",
+            "currency": "USD",
+            "initial_balance": 100.0,
+        }
 
         self.assertEqual(result["statusCode"], 200)
         self.assertIsInstance(body, dict)
-        self.assertEqual(body)
+        self.assertEqual(body, expected)
+
+    @db_session
+    def test_get_account_not_found(self):
+        self.event["pathParameters"] = {"uuid": "17f95d8b-a039-47e5-9478-e4dceb78010f"}
+        result = get_account.handle(self.event, {})
+        body = json.loads(result["body"])
+
+        expected = {"error": "Account not found"}
+
+        self.assertEqual(result["statusCode"], 404)
+        self.assertIsInstance(body, dict)
+        self.assertEqual(body, expected)
