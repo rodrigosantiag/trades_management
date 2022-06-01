@@ -1,4 +1,4 @@
-sentry-sdk==1.5.10
+sentry-sdk==1.5.12
 pony==0.7.16
 boto3==1.22.4
 psycopg2-binary==2.9.3
