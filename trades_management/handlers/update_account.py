@@ -20,7 +20,7 @@ def handle(request: api.Request):
     except (KeyError, ValueError, IndexError):
         account = None
 
-    if not account:
+    if not account or not broker:
         return 400, {"error": "Invalid broker or account"}
 
     payload = {

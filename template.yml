@@ -281,3 +281,22 @@ Resources:
             Method: get
             RestApiId:
               Ref: ApiGateway
+
+  UpdateAccount:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: trades-management-update-account
+      CodeUri: trades_management
+      Handler: handlers.update_account.handle
+      Policies:
+        - AWSLambda_FullAccess
+        - AmazonSSMReadOnlyAccess
+        - AmazonRDSFullAccess
+      Events:
+        UpdateAccount:
+          Type: Api
+          Properties:
+            Path: /accounts/{uuid}
+            Method: patch
+            RestApiId:
+              Ref: ApiGateway
