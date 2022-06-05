@@ -122,9 +122,9 @@ class TestUpdateAccount(unittest.TestCase):
         response = update_account.handle(event, {})
         body = json.loads(response["body"])
 
-        self.assertEqual(response["statusCode"], 404)
+        self.assertEqual(response["statusCode"], 400)
         self.assertIsInstance(body, dict)
-        self.assertEqual(body["error"], "Account not found")
+        self.assertEqual(body["error"], "Invalid broker or account")
 
     def test_handle_account_does_not_belong_to_user(self):
         payload = {
@@ -146,6 +146,6 @@ class TestUpdateAccount(unittest.TestCase):
         response = update_account.handle(event, {})
         body = json.loads(response["body"])
 
-        self.assertEqual(response["statusCode"], 404)
+        self.assertEqual(response["statusCode"], 400)
         self.assertIsInstance(body, dict)
-        self.assertEqual(body["error"], "Account not found")
+        self.assertEqual(body["error"], "Invalid broker or account")

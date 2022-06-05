@@ -21,7 +21,7 @@ def handle(request: api.Request):
         account = None
 
     if not account:
-        return 404, {"error": "Account not found"}
+        return 400, {"error": "Invalid broker or account"}
 
     payload = {
         "type_account": body.get("type_account"),
