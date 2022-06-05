@@ -22,6 +22,7 @@ def handle(request: api.Request):
             "type_account": body.get("type_account"),
             "currency": body.get("currency"),
             "initial_balance": body.get("initial_balance"),
+            "current_balance": body.get("initial_balance"),
             "broker_id": broker.id,
             "user_id": user.id,
         }
