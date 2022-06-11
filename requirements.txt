@@ -6,4 +6,4 @@ yoyo-migrations==7.3.2
 python-jose==3.3.0
 
 # serpens
-https://github.com/rodrigosantiag/serpens/tarball/v2.0.0a5#egg=serpens
+https://github.com/rodrigosantiag/serpens/tarball/v2.0.0a6#egg=serpens
