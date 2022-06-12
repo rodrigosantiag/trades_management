@@ -471,6 +471,47 @@ paths:
         type: aws_proxy
         uri:
           Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${UpdateAccount.Arn}/invocations"
+    delete:
+      summary: Delete account
+      description: Delete account
+      parameters:
+        - in: path
+          name: uuid
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Account UUID
+      responses:
+        204:
+          description: Deleted
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
+              examples:
+                bad_request:
+                  $ref: "#/components/examples/GenericErrorExample"
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                unauthorized:
+                  $ref: "#/components/examples/Unauthorized"
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                bad_request:
+                  $ref: "#/components/examples/InternalServerError"
 
 components:
   schemas:
@@ -627,8 +668,17 @@ components:
       enum:
         - D
         - R
+    GenericErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
 
   examples:
+    GenericErrorExample:
+      summary: Generic error
+      value:
+        error: Some error message
     Unauthorized:
       summary: Unauthorized
       value:
