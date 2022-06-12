@@ -512,6 +512,11 @@ paths:
               examples:
                 bad_request:
                   $ref: "#/components/examples/InternalServerError"
+      x-amazon-apigateway-integration:
+        passthroughBehavior: when_no_match
+        httpMethod: POST
+        type: aws_proxy
+        uri: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DeleteAccount.Arn}/invocations"
 
 components:
   schemas:
