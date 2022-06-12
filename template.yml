@@ -300,3 +300,22 @@ Resources:
             Method: patch
             RestApiId:
               Ref: ApiGateway
+
+  DeleteAccount:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: trades-management-delete-account
+      CodeUri: trades_management
+      Handler: handlers.delete_account.handle
+      Policies:
+        - AWSLambda_FullAccess
+        - AmazonSSMReadOnlyAccess
+        - AmazonRDSFullAccess
+      Events:
+        DeleteAccount:
+          Type: Api
+          Properties:
+            Path: /accounts/{uuid}
+            Method: delete
+            RestApiId:
+              Ref: ApiGateway
