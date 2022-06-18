@@ -64,6 +64,7 @@ install:
 lint:
 	black --line-length=100 --target-version=py38 --check .
 	flake8 --max-line-length=100 --ignore=E402,W503,E712 --exclude .venv,dependencies
+	@if [ -f swagger.yml ]; then openapi-spec-validator swagger.yml; fi
 
 format:
 	black --line-length=100 --target-version=py38 .
