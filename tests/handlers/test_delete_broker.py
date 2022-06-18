@@ -75,7 +75,7 @@ class TestDeleteBroker(unittest.TestCase):
 
     @db_session
     def test_handle_missing_broker_uuid(self):
-        expected = {"error": "Broker not found"}
+        expected = {"error": "Invalid broker"}
 
         event = {
             "headers": {"Authorization": "Bearer xpto"},
@@ -85,12 +85,12 @@ class TestDeleteBroker(unittest.TestCase):
         response = delete_broker.handle(event, {})
         body = json.loads(response["body"])
 
-        self.assertEqual(response["statusCode"], 404)
+        self.assertEqual(response["statusCode"], 400)
         self.assertEqual(body["error"], expected["error"])
 
     @db_session
     def test_handle_badly_formed_path_parameters(self):
-        expected = {"error": "Broker not found"}
+        expected = {"error": "Invalid broker"}
 
         event = {
             "headers": {"Authorization": "Bearer xpto"},
@@ -101,12 +101,12 @@ class TestDeleteBroker(unittest.TestCase):
         response = delete_broker.handle(event, {})
         body = json.loads(response["body"])
 
-        self.assertEqual(response["statusCode"], 404)
+        self.assertEqual(response["statusCode"], 400)
         self.assertEqual(body["error"], expected["error"])
 
     @db_session
     def test_handle_broker_does_not_belong_to_user(self):
-        expected = {"error": "Broker not found"}
+        expected = {"error": "Invalid broker"}
 
         event = {
             "headers": {"Authorization": "Bearer xpto"},
@@ -117,7 +117,7 @@ class TestDeleteBroker(unittest.TestCase):
         response = delete_broker.handle(event, {})
         body = json.loads(response["body"])
 
-        self.assertEqual(response["statusCode"], 404)
+        self.assertEqual(response["statusCode"], 400)
         self.assertEqual(body["error"], expected["error"])
 
     @db_session

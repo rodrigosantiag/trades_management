@@ -10,7 +10,7 @@ def handle(request: api.Request):
     broker_uuid = request.path.get("uuid")
 
     if not broker_uuid:
-        return 404, {"error": "Broker not found"}
+        return 400, {"error": "Invalid broker"}
 
     user = User.get(uid=user_uuid)
 
@@ -20,7 +20,7 @@ def handle(request: api.Request):
         broker = None
 
     if not broker:
-        return 404, {"error": "Broker not found"}
+        return 400, {"error": "Invalid broker"}
 
     broker.delete()
 
