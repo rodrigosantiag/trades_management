@@ -149,6 +149,8 @@ paths:
               examples:
                 bad_request:
                   $ref: "#/components/examples/BrokerValidation"
+                generic_error:
+                  $ref: "#/components/examples/GenericErrorExample"
         401:
           description: Unauthorized
           content:
@@ -158,15 +160,6 @@ paths:
               examples:
                 unauthorized:
                   $ref: "#/components/examples/Unauthorized"
-        404:
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-              examples:
-                not_found:
-                  $ref: "#/components/examples/NotFound"
         500:
           description: Internal Server Error
           content:
@@ -196,15 +189,15 @@ paths:
       responses:
         204:
           description: Deleted
-        404:
-          description: Not found
+        400:
+          description: Bad request
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                $ref: "#/components/schemas/GenericErrorResponse"
               examples:
                 not_found:
-                  $ref: "#/components/examples/NotFound"
+                  $ref: "#/components/examples/GenericErrorExample"
         401:
           description: Unauthorized
           content:
