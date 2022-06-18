@@ -1,6 +1,5 @@
 import json
 import unittest
-from operator import itemgetter
 
 from pony.orm.core import db_session
 
@@ -111,12 +110,6 @@ class TestUpdateBroker(unittest.TestCase):
 
     @db_session
     def test_handle_succeed_when_broker_has_no_accounts(self):
-        expected = {
-            "uid": str(self.broker.uid),
-            "name": "Broker No Account Updated",
-            "accounts": [],
-        }
-
         payload = {"name": "Broker No Account Updated"}
 
         event = {
@@ -129,37 +122,12 @@ class TestUpdateBroker(unittest.TestCase):
         }
 
         response = update_broker.handle(event, {})
-        body = json.loads(response["body"])
 
-        self.assertEqual(response["statusCode"], 200)
-        self.assertIsInstance(body, dict)
-
-        for key, value in expected.items():
-            self.assertEqual(body[key], value)
+        self.assertEqual(response["statusCode"], 204)
+        self.assertIsNone(response["body"])
 
     @db_session
     def test_handle_succeed_when_broker_has_accounts(self):
-        expected = {
-            "uid": "29d49a64-220d-452c-a6d4-9ffc67989534",
-            "name": "Broker With Accounts Updated",
-            "accounts": [
-                {
-                    "uid": "6de4eb98-383b-46a0-a673-bba34aad2c69",
-                    "type_account": "D",
-                    "currency": "USD",
-                    "initial_balance": 10000.0,
-                    "current_balance": 10000.0,
-                },
-                {
-                    "uid": "a003ec51-995c-4852-a43d-133f60f41c46",
-                    "type_account": "R",
-                    "currency": "BRL",
-                    "initial_balance": 1000.0,
-                    "current_balance": 2000.0,
-                },
-            ],
-        }
-
         payload = {
             "name": "Broker With Accounts Updated",
         }
@@ -174,13 +142,6 @@ class TestUpdateBroker(unittest.TestCase):
         }
 
         response = update_broker.handle(event, {})
-        body = json.loads(response["body"])
 
-        self.assertEqual(response["statusCode"], 200)
-        self.assertIsInstance(body, dict)
-        self.assertEqual(body["name"], expected["name"])
-        self.assertEqual(body["uid"], expected["uid"])
-        self.assertListEqual(
-            sorted(body["accounts"], key=itemgetter("uid")),
-            sorted(expected["accounts"], key=itemgetter("uid")),
-        )
+        self.assertEqual(response["statusCode"], 204)
+        self.assertIsNone(response["body"])

@@ -42,4 +42,4 @@ def handle(request: api.Request):
     account.initial_balance = data.initial_balance
     account.updated_at = datetime.utcnow()
 
-    return 204, ""
+    return 204, None

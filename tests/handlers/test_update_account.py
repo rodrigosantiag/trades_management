@@ -70,7 +70,7 @@ class TestUpdateAccount(unittest.TestCase):
         response = update_account.handle(event, {})
 
         self.assertEqual(response["statusCode"], 204)
-        self.assertEqual(response["body"], "")
+        self.assertIsNone(response["body"])
 
         with db_session:
             updated_account = Account.get(uid=str(self.account.uid))
