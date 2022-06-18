@@ -26,16 +26,5 @@ def handle(request: api.Request):
         return 400, {"error": f"{error}"}
 
     broker.name = data.name
-    updated_broker = broker.to_dict(only=["uid", "name"])
-    updated_broker["accounts"] = []
-    broker_accounts = list(broker.accounts)
 
-    if broker_accounts:
-        for account in broker_accounts:
-            updated_broker["accounts"].append(
-                account.to_dict(
-                    only=["uid", "type_account", "currency", "initial_balance", "current_balance"]
-                )
-            )
-
-    return 200, updated_broker
+    return 204, None
