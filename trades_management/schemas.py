@@ -1,7 +1,20 @@
 from dataclasses import dataclass, field
 from datetime import datetime
+from typing import Union, List
 
 from serpens.schema import Schema
+
+import enums
+
+
+@dataclass
+class ErrorResponse(Schema):
+    type: enums.ErrorCode
+    errors: list
+
+    @classmethod
+    def create(cls, code: enums.ErrorCode, messages: Union[List[str], str, None] = None):
+        pass
 
 
 @dataclass
