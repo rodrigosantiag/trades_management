@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from serpens import api
 
 from entities import Broker, User
@@ -26,5 +28,6 @@ def handle(request: api.Request):
         return 400, {"message": f"{error}"}
 
     broker.name = data.name
+    broker.updated_at = datetime.utcnow()
 
     return 204, None

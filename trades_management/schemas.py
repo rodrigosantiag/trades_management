@@ -3,6 +3,8 @@ from datetime import datetime
 
 from serpens.schema import Schema
 
+from entities import User
+
 
 @dataclass
 class BrokerSchema(Schema):
@@ -23,3 +25,9 @@ class AccountSchema(Schema):
     current_balance: float = None
     created_at: datetime = field(default_factory=datetime.utcnow)
     updated_at: datetime = field(default_factory=datetime.utcnow)
+
+
+@dataclass
+class StrategySchema(Schema):
+    name: str
+    user: User
