@@ -70,14 +70,14 @@ class TestAuthorized(unittest.TestCase):
             "statusCode": 401,
             "body": json.dumps(
                 {
-                    "error": "Unauthorized",
+                    "message": "Unauthorized",
                 }
             ),
         }
 
         @helpers.authorized
         def handler(request):
-            return {"error": "Unauthorized"}
+            return {"message": "Unauthorized"}
 
         response = handler(event, {})
         self.assertDictEqual(response, expected)

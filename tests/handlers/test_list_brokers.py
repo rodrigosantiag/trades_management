@@ -107,7 +107,7 @@ class TestListBrokers(unittest.TestCase):
 
         self.assertEqual(result["statusCode"], 401)
         self.assertIsInstance(body, dict)
-        self.assertEqual(body["error"], "Unauthorized")
+        self.assertEqual(body["message"], "Unauthorized")
 
     @db_session
     def test_handle_user_with_no_broker(self):

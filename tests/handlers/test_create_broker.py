@@ -78,7 +78,7 @@ class TestCreateBroker(unittest.TestCase):
 
         self.assertIsInstance(response, dict)
         self.assertEqual(response["statusCode"], 400)
-        self.assertEqual(body["error"], expected)
+        self.assertEqual(body["message"], expected)
 
     @db_session
     def test_handle_invalid_payload(self):
@@ -100,4 +100,4 @@ class TestCreateBroker(unittest.TestCase):
 
         self.assertIsInstance(response, dict)
         self.assertEqual(response["statusCode"], 400)
-        self.assertEqual(body["error"], "'name' must be of type str")
+        self.assertEqual(body["message"], "'name' must be of type str")

@@ -13,6 +13,8 @@ def handle(request: api.Request):
     user = User.get(uid=user_uuid)
     account_uuid = request.path.get("uuid")
     body = request.body
+    broker = None
+    account = None
 
     try:
         broker = Broker.get(uid=body.get("broker_id"), user=user)
@@ -21,7 +23,7 @@ def handle(request: api.Request):
         account = None
 
     if not account or not broker:
-        return 400, {"error": "Invalid broker or account"}
+        return 400, {"message": "Invalid broker or account"}
 
     payload = {
         "type_account": body.get("type_account"),
@@ -34,7 +36,7 @@ def handle(request: api.Request):
     try:
         data = AccountSchema.load(payload)
     except (TypeError, ValueError) as error:
-        return 400, {"error": f"{error}"}
+        return 400, {"message": f"{error}"}
 
     account.type_account = data.type_account
     account.broker = broker

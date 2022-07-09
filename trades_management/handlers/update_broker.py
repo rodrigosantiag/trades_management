@@ -18,12 +18,12 @@ def handle(request: api.Request):
         broker = None
 
     if not broker:
-        return 404, {"error": "Broker not found"}
+        return 404, {"message": "Broker not found"}
 
     try:
         data = BrokerSchema.load(payload)
     except (TypeError, ValueError) as error:
-        return 400, {"error": f"{error}"}
+        return 400, {"message": f"{error}"}
 
     broker.name = data.name
 
