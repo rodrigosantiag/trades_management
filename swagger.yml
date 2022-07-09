@@ -562,20 +562,8 @@ components:
     ErrorResponse:
       type: object
       properties:
-        errors:
-          type: array
-          items:
-            type: object
-            properties:
-              type:
-                type: string
-              messages:
-                type: array
-                items:
-                  type: string
-              trace_id:
-                type: string
-                format: uuid
+        message:
+          type: string
     ListBrokersResponse:
       type: object
       properties:
@@ -644,28 +632,19 @@ components:
     GenericErrorExample:
       summary: Generic error
       value:
-        error: Some error message
+        message: Some error message
     Unauthorized:
       summary: Unauthorized
       value:
-        errors:
-          - type: unauthorized
-            messages: [ "Invalid token" ]
-            trace_id: "C3D3DB61-D98F-4839-AC95-D5A2AA14ACFF"
+        message: Unauthorized
     NotFound:
       summary: Not Found
       value:
-        errors:
-          - type: not_found
-            messages: [ "Resource not found" ]
-            trace_id: "C3D3DB61-D98F-4839-AC95-D5A2AA14ACFF"
+        message: Resource not found
     InternalServerError:
       summary: Internal Server Error
       value:
-        errors:
-          - type: network_error
-            messages: [ "Internal server error" ]
-            trace_id: "C3D3DB61-D98F-4839-AC95-D5A2AA14ACFF"
+        message: Internal server error
     BrokerRequest:
       summary: Broker request
       value:
@@ -677,10 +656,7 @@ components:
     BrokerValidation:
       summary: BadRequest
       value:
-        errors:
-          - type: invalid_request
-            messages: [ "'name' is a required field" ]
-            trace_id: "C3D3DB61-D98F-4839-AC95-D5A2AA14ACFF"
+        message: "Bad request message"
     UserWithNoBroker:
       summary: User which have no brokers associated to
       value:
@@ -726,10 +702,7 @@ components:
     AccountValidation:
       summary: Account bad request
       value:
-        errors:
-          - type: invalid_request
-            messages: [ "'type_account' is a required field" ]
-            trace_id: "4a399e08-4cb2-4b96-a6f2-be84383ea90e"
+        message: "[ 'type_account' is a required field, 'name' is a required field ]"
     UserWithAccounts:
       summary: User with accounts
       value:

@@ -52,7 +52,7 @@ class TestUpdateBroker(unittest.TestCase):
 
     @db_session
     def test_handle_when_broker_does_not_exist_for_user(self):
-        expected = {"error": "Broker not found"}
+        expected = {"message": "Broker not found"}
         payload = {"name": "Broker Name Updated"}
 
         event = {
@@ -68,11 +68,11 @@ class TestUpdateBroker(unittest.TestCase):
         body = json.loads(response["body"])
 
         self.assertEqual(response["statusCode"], 404)
-        self.assertEqual(body["error"], expected["error"])
+        self.assertEqual(body["message"], expected["message"])
 
     @db_session
     def test_handle_when_broker_uuid_in_path_is_missing(self):
-        expected = {"error": "Broker not found"}
+        expected = {"message": "Broker not found"}
         payload = {"name": "Broker Name Updated"}
 
         event = {
@@ -87,7 +87,7 @@ class TestUpdateBroker(unittest.TestCase):
         body = json.loads(response["body"])
 
         self.assertEqual(response["statusCode"], 404)
-        self.assertEqual(body["error"], expected["error"])
+        self.assertEqual(body["message"], expected["message"])
 
     @db_session
     def test_handle_update_without_name(self):
@@ -106,7 +106,7 @@ class TestUpdateBroker(unittest.TestCase):
         body = json.loads(response["body"])
 
         self.assertEqual(response["statusCode"], 400)
-        self.assertIn("error", body)
+        self.assertIn("message", body)
 
     @db_session
     def test_handle_succeed_when_broker_has_no_accounts(self):

@@ -60,7 +60,7 @@ class TestDeleteAccount(unittest.TestCase):
         body = json.loads(response["body"])
 
         self.assertEqual(response["statusCode"], 400)
-        self.assertDictEqual(body, {"error": "Invalid account"})
+        self.assertDictEqual(body, {"message": "Invalid account"})
 
     def test_handle_account_with_invalid_path(self):
         event = {
@@ -75,4 +75,4 @@ class TestDeleteAccount(unittest.TestCase):
         body = json.loads(response["body"])
 
         self.assertEqual(response["statusCode"], 400)
-        self.assertDictEqual(body, {"error": "Invalid account"})
+        self.assertDictEqual(body, {"message": "Invalid account"})

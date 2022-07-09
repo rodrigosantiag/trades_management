@@ -57,7 +57,7 @@ class TestDeleteBroker(unittest.TestCase):
 
     @db_session
     def test_handle_unauthorized(self):
-        expected = {"error": "Unauthorized"}
+        expected = {"message": "Unauthorized"}
 
         event = {
             "headers": {"Authorization": "Bearer xpto"},
@@ -71,11 +71,11 @@ class TestDeleteBroker(unittest.TestCase):
         body = json.loads(response["body"])
 
         self.assertEqual(response["statusCode"], 401)
-        self.assertEqual(body["error"], expected["error"])
+        self.assertEqual(body["message"], expected["message"])
 
     @db_session
     def test_handle_missing_broker_uuid(self):
-        expected = {"error": "Invalid broker"}
+        expected = {"message": "Invalid broker"}
 
         event = {
             "headers": {"Authorization": "Bearer xpto"},
@@ -86,11 +86,11 @@ class TestDeleteBroker(unittest.TestCase):
         body = json.loads(response["body"])
 
         self.assertEqual(response["statusCode"], 400)
-        self.assertEqual(body["error"], expected["error"])
+        self.assertEqual(body["message"], expected["message"])
 
     @db_session
     def test_handle_badly_formed_path_parameters(self):
-        expected = {"error": "Invalid broker"}
+        expected = {"message": "Invalid broker"}
 
         event = {
             "headers": {"Authorization": "Bearer xpto"},
@@ -102,11 +102,11 @@ class TestDeleteBroker(unittest.TestCase):
         body = json.loads(response["body"])
 
         self.assertEqual(response["statusCode"], 400)
-        self.assertEqual(body["error"], expected["error"])
+        self.assertEqual(body["message"], expected["message"])
 
     @db_session
     def test_handle_broker_does_not_belong_to_user(self):
-        expected = {"error": "Invalid broker"}
+        expected = {"message": "Invalid broker"}
 
         event = {
             "headers": {"Authorization": "Bearer xpto"},
@@ -118,7 +118,7 @@ class TestDeleteBroker(unittest.TestCase):
         body = json.loads(response["body"])
 
         self.assertEqual(response["statusCode"], 400)
-        self.assertEqual(body["error"], expected["error"])
+        self.assertEqual(body["message"], expected["message"])
 
     @db_session
     def test_handle_succeed(self):

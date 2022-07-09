@@ -16,7 +16,7 @@ def handle(request: api.Request):
         account = None
 
     if account is None:
-        return 400, {"error": "Invalid account"}
+        return 400, {"message": "Invalid account"}
 
     account.delete()
 
