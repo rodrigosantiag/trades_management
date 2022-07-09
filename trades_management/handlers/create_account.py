@@ -15,7 +15,7 @@ def handle(request: api.Request):
     broker = Broker.get(uid=body.get("broker_uid"), user=user)
 
     if not broker:
-        return 400, {"error": "Invalid broker"}
+        return 400, {"message": "Invalid broker"}
 
     try:
         payload = {
@@ -29,7 +29,7 @@ def handle(request: api.Request):
 
         data = AccountSchema.load(payload)
     except (KeyError, ValueError, TypeError) as error:
-        return 400, {"error": str(error)}
+        return 400, {"message": str(error)}
 
     account = Account(
         uid=uuid4(),

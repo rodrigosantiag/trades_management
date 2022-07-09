@@ -73,7 +73,7 @@ class TestGetAccount(unittest.TestCase):
         result = get_account.handle(self.event, {})
         body = json.loads(result["body"])
 
-        expected = {"error": "Account not found"}
+        expected = {"message": "Account not found"}
 
         self.assertEqual(result["statusCode"], 404)
         self.assertIsInstance(body, dict)

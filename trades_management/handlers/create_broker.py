@@ -15,7 +15,7 @@ def handle(request: api.Request):
     try:
         data = BrokerSchema.load(request.body)
     except (TypeError, ValueError) as error:
-        return 400, {"error": f"{error}"}
+        return 400, {"message": f"{error}"}
 
     broker = Broker(uid=uuid4(), name=data.name, user=user)
 

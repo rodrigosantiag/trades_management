@@ -84,14 +84,14 @@ class TestCreateAccount(unittest.TestCase):
             "body": json.dumps(payload),
         }
 
-        expected = {"error": "'type_account' must be of type str"}
+        expected = {"message": "'type_account' must be of type str"}
 
         response = create_account.handle(event, {})
         body = json.loads(response["body"])
 
         self.assertEqual(response["statusCode"], 400)
         self.assertIsInstance(body, dict)
-        self.assertEqual(body["error"], expected["error"])
+        self.assertEqual(body["message"], expected["message"])
 
     @db_session
     def test_handle_create_account_into_another_user_broker(self):
@@ -108,11 +108,11 @@ class TestCreateAccount(unittest.TestCase):
             "body": json.dumps(payload),
         }
 
-        expected = {"error": "Invalid broker"}
+        expected = {"message": "Invalid broker"}
 
         response = create_account.handle(event, {})
         body = json.loads(response["body"])
 
         self.assertEqual(response["statusCode"], 400)
         self.assertIsInstance(body, dict)
-        self.assertEqual(body["error"], expected["error"])
+        self.assertEqual(body["message"], expected["message"])

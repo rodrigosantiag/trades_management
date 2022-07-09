@@ -100,7 +100,7 @@ class TestUpdateAccount(unittest.TestCase):
 
         self.assertEqual(response["statusCode"], 400)
         self.assertIsInstance(body, dict)
-        self.assertEqual(body["error"], "'currency' must be of type str")
+        self.assertEqual(body["message"], "'currency' must be of type str")
 
     def test_handle_account_does_not_exist(self):
         payload = {
@@ -124,7 +124,7 @@ class TestUpdateAccount(unittest.TestCase):
 
         self.assertEqual(response["statusCode"], 400)
         self.assertIsInstance(body, dict)
-        self.assertEqual(body["error"], "Invalid broker or account")
+        self.assertEqual(body["message"], "Invalid broker or account")
 
     def test_handle_account_does_not_belong_to_user(self):
         payload = {
@@ -148,4 +148,4 @@ class TestUpdateAccount(unittest.TestCase):
 
         self.assertEqual(response["statusCode"], 400)
         self.assertIsInstance(body, dict)
-        self.assertEqual(body["error"], "Invalid broker or account")
+        self.assertEqual(body["message"], "Invalid broker or account")

@@ -12,7 +12,7 @@ def handle(request: api.Request):
     account = Account.get(uid=account_uuid, user=user)
 
     if not account:
-        return 404, {"error": "Account not found"}
+        return 404, {"message": "Account not found"}
 
     result = {
         "broker_uuid": str(account.broker.uid),
