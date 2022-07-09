@@ -1,4 +1,4 @@
-sentry-sdk==1.5.12
+sentry-sdk==1.6.0
 pony==0.7.16
 boto3==1.24.2
 psycopg2-binary==2.9.3
@@ -6,4 +6,4 @@ yoyo-migrations==7.3.2
 python-jose==3.3.0
 
 # serpens
-https://github.com/rodrigosantiag/serpens/tarball/v2.0.0a6#egg=serpens
+https://github.com/rodrigosantiag/serpens/tarball/v2.0.0a7#egg=serpens
