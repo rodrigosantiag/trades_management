@@ -12,26 +12,18 @@ def handle(request: api.Request):
     user_uuid = request.authorizer.get("user_uuid")
     user = User.get(uid=user_uuid)
     account_uuid = request.path.get("uuid")
-    body = request.body
+    payload = request.body
     broker = None
     account = None
 
     try:
-        broker = Broker.get(uid=body.get("broker_id"), user=user)
+        broker = Broker.get(uid=payload.get("broker_id"), user=user)
         account = Account.get(user=user, uid=account_uuid)
     except (KeyError, ValueError, IndexError):
         account = None
 
     if not account or not broker:
         return 400, {"message": "Invalid broker or account"}
-
-    payload = {
-        "type_account": body.get("type_account"),
-        "broker_id": broker.id,
-        "currency": body.get("currency"),
-        "user_id": user.id,
-        "initial_balance": body.get("initial_balance"),
-    }
 
     try:
         data = AccountSchema.load(payload)

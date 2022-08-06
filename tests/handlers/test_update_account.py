@@ -100,7 +100,7 @@ class TestUpdateAccount(unittest.TestCase):
 
         self.assertEqual(response["statusCode"], 400)
         self.assertIsInstance(body, dict)
-        self.assertEqual(body["message"], "'currency' must be of type str")
+        self.assertEqual(body["message"], "'currency' is a required field")
 
     def test_handle_account_does_not_exist(self):
         payload = {
