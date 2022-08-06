@@ -84,7 +84,7 @@ class TestCreateAccount(unittest.TestCase):
             "body": json.dumps(payload),
         }
 
-        expected = {"message": "'type_account' must be of type str"}
+        expected = {"message": "'type_account' is a required field"}
 
         response = create_account.handle(event, {})
         body = json.loads(response["body"])
