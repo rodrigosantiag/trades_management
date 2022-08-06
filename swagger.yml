@@ -503,6 +503,63 @@ paths:
         uri:
           Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DeleteAccount.Arn}/invocations"
 
+  /strategies:
+    post:
+      summary: Create strategy
+      description: Create a new strategy
+      requestBody:
+        description: Strategy payload
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StrategyRequest"
+            examples:
+              request:
+                $ref: "#/components/examples/StrategyRequest"
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourceCreated"
+              example:
+                uid: "A3520D74-A9D6-4B20-AC1B-3424F6AD9EB9"
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                bad_request:
+                  $ref: "#/components/examples/BrokerValidation"
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                unauthorized:
+                  $ref: "#/components/examples/Unauthorized"
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                bad_request:
+                  $ref: "#/components/examples/InternalServerError"
+      x-amazon-apigateway-integration:
+        passthroughBehavior: when_no_match
+        httpMethod: POST
+        type: aws_proxy
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateStrategy.Arn}/invocations"
+
 components:
   schemas:
     BrokerRequest:
@@ -617,6 +674,13 @@ components:
                 properties:
                   name:
                     type: string
+    StrategyRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
     TypeAccount:
       type: string
       enum:
@@ -718,6 +782,10 @@ components:
       summary: User with no accounts
       value:
         accounts: [ ]
+    StrategyRequest:
+      summary: Strategy request
+      value:
+        name: "Test Strategy"
 
   securitySchemes:
     Authorizer:

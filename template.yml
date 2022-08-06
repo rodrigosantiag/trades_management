@@ -319,3 +319,22 @@ Resources:
             Method: delete
             RestApiId:
               Ref: ApiGateway
+
+  CreateStrategy:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: trades-management-create-strategy
+      CodeUri: trades_management
+      Handler: handlers.create_strategy.handle
+      Policies:
+        - AWSLambda_FullAccess
+        - AmazonSSMReadOnlyAccess
+        - AmazonRDSFullAccess
+      Events:
+        PostStrategy:
+          Type: Api
+          Properties:
+            Path: /strategies
+            Method: post
+            RestApiId:
+              Ref: ApiGateway
