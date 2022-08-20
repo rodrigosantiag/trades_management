@@ -559,6 +559,66 @@ paths:
         type: aws_proxy
         uri:
           Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateStrategy.Arn}/invocations"
+  /strategies/{uuid}:
+    patch:
+      summary: Update strategy
+      description: Update an existing strategy
+      parameters:
+        - in: path
+          name: uuid
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Strategy UUID
+      requestBody:
+        description: Strategy update payload
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StrategyUpdateRequest"
+            examples:
+              request:
+                $ref: "#/components/examples/StrategyUpdateRequest"
+      responses:
+        204:
+          description: Updated
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                bad_request:
+                  $ref: "#/components/examples/BrokerValidation"
+                generic_error:
+                  $ref: "#/components/examples/GenericErrorExample"
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                unauthorized:
+                  $ref: "#/components/examples/Unauthorized"
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                bad_request:
+                  $ref: "#/components/examples/InternalServerError"
+      x-amazon-apigateway-integration:
+        passthroughBehavior: when_no_match
+        httpMethod: POST
+        type: aws_proxy
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${UpdateStrategy.Arn}/invocations"
 
 components:
   schemas:
@@ -681,6 +741,13 @@ components:
       properties:
         name:
           type: string
+    StrategyUpdateRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
     TypeAccount:
       type: string
       enum:
@@ -786,6 +853,10 @@ components:
       summary: Strategy request
       value:
         name: "Test Strategy"
+    StrategyUpdateRequest:
+      summary: Strategy update request
+      value:
+        name: "Strategy name updated"
 
   securitySchemes:
     Authorizer:
