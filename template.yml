@@ -338,3 +338,22 @@ Resources:
             Method: post
             RestApiId:
               Ref: ApiGateway
+
+  UpdateStrategy:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: trades-management-update-strategy
+      CodeUri: trades_management
+      Handler: handlers.update_strategy.handle
+      Policies:
+        - AWSLambda_FullAccess
+        - AmazonSSMReadOnlyAccess
+        - AmazonRDSFullAccess
+      Events:
+        UpdateStrategy:
+          Type: Api
+          Properties:
+            Path: /strategies/{uuid}
+            Method: patch
+            RestApiId:
+              Ref: ApiGateway
