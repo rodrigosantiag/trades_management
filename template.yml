@@ -357,3 +357,14 @@ Resources:
             Method: patch
             RestApiId:
               Ref: ApiGateway
+
+  ListStrategies:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: trades-management-list-strategies
+      CodeUri: trades_management
+      Handler: handlers.list_strategies.handle
+      Policies:
+        - AWSLambda_FullAccess
+        - AmazonSSMReadOnlyAccess
+        - AmazonRDSFullAccess
