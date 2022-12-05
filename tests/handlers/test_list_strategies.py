@@ -1,10 +1,9 @@
 import json
 import unittest
 
-from pony.orm import db_session
-
 from entities import User, Strategy
 from handlers import list_strategies
+from pony.orm import db_session
 
 
 class TestListStrategies(unittest.TestCase):
@@ -50,24 +49,28 @@ class TestListStrategies(unittest.TestCase):
         User.select().delete()
 
     def test_handle_succeed(self):
-        expected = [
-            {"uid": "2d63b31b-98ce-42d3-a88f-5571ef2dea2d", "name": "Strategy 1"},
-            {"uid": "837614e4-6f2a-4867-b9d1-aa872cc84cd3", "name": "Strategy 2"},
-        ]
+        expected = {
+            "strategies": [
+                {"uid": "2d63b31b-98ce-42d3-a88f-5571ef2dea2d", "name": "Strategy 1"},
+                {"uid": "837614e4-6f2a-4867-b9d1-aa872cc84cd3", "name": "Strategy 2"},
+            ]
+        }
 
         response = list_strategies.handle(self.event, {})
         body = json.loads(response["body"])
 
         self.assertEqual(response["statusCode"], 200)
-        self.assertListEqual(expected, body)
+        self.assertDictEqual(expected, body)
 
     def test_handle_succeed_user_with_no_strategy(self):
         self.event["requestContext"]["authorizer"][
             "user_uuid"
         ] = "9ffd48cb-ce6b-4fe2-a4fb-9073920c7dec"
 
+        expected = {"strategies": []}
+
         response = list_strategies.handle(self.event, {})
         body = json.loads(response["body"])
 
         self.assertEqual(response["statusCode"], 200)
-        self.assertListEqual([], body)
+        self.assertDictEqual(expected, body)
