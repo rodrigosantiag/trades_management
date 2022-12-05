@@ -559,6 +559,53 @@ paths:
         type: aws_proxy
         uri:
           Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateStrategy.Arn}/invocations"
+    get:
+      summary: Get strategies
+      description: List user's stategies
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListStrategiesResponse"
+              examples:
+                user_with_strategies:
+                  $ref: "#/components/examples/UserWithStrategies"
+                user_with_no_strategies:
+                  $ref: "#/components/examples/UserWithNoStrategy"
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: "'name' is a required field"
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                unauthorized:
+                  $ref: "#/components/examples/Unauthorized"
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                bad_request:
+                  $ref: "#/components/examples/InternalServerError"
+      x-amazon-apigateway-integration:
+        passthroughBehavior: when_no_match
+        httpMethod: POST
+        type: aws_proxy
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ListStrategies.Arn}/invocations"
   /strategies/{uuid}:
     patch:
       summary: Update strategy
@@ -748,6 +795,16 @@ components:
       properties:
         name:
           type: string
+    ListStrategiesResponse:
+      type: array
+      items:
+        type: object
+        properties:
+          uid:
+            type: string
+            format: uuid
+          name:
+            type: string
     TypeAccount:
       type: string
       enum:
@@ -857,6 +914,18 @@ components:
       summary: Strategy update request
       value:
         name: "Strategy name updated"
+    UserWithStrategies:
+      summary: User with strategies
+      value:
+        strategies:
+          - uid: "71d7a929-3e66-4ebd-aa12-a23f8ae0ed32"
+            name: "Strategy 1"
+          - uid: "8b3aa24b-849f-4f50-8a94-d78038257257"
+            name: "Strategy 2"
+    UserWithNoStrategy:
+      summary: User with no strategies
+      value:
+        strategies: []
 
   securitySchemes:
     Authorizer:
