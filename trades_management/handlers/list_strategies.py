@@ -1,7 +1,6 @@
-from serpens import api
-
 from entities import User, Strategy
 from helpers import authorized
+from serpens import api
 
 
 @authorized
@@ -20,4 +19,4 @@ def handle(request: api.Request):
             }
         )
 
-    return user_strategies
+    return {"strategies": user_strategies}
