@@ -368,3 +368,11 @@ Resources:
         - AWSLambda_FullAccess
         - AmazonSSMReadOnlyAccess
         - AmazonRDSFullAccess
+      Events:
+        ListStrategies:
+          Type: Api
+          Properties:
+            Path: /strategies
+            Method: get
+            RestApiId:
+              Ref: ApiGateway
